@@ -1,0 +1,214 @@
+fileFormatVersion: 2
+guid: 0c62c9d6cf69fe6418228be1755f4952
+timeCreated: 1501201306
+licenseType: Free
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: feather_balls
+    100002: feather_big
+    100004: feather_pendant
+    100006: feather_pendant_buckle
+    100008: feather_small
+    100010: gem_hat
+    100012: //RootNode
+    100014: hat_pointy
+    100016: hay
+    100018: moon_sign_hat
+    100020: patch
+    100022: patch_curve
+    100024: patch_sewing
+    100026: pointy_sew_curve
+    100028: rope_hat
+    100030: sew_curve_01
+    100032: sew_curve_02
+    100034: sew_curve_03
+    100036: sew_curve_04
+    100038: sewing_hat_01
+    100040: sewing_hat_02
+    100042: sewing_hat_03
+    100044: sewing_hat_04
+    100046: sewing_pointy_hat
+    100048: straps_hat
+    100050: wrapping_hat
+    400000: feather_balls
+    400002: feather_big
+    400004: feather_pendant
+    400006: feather_pendant_buckle
+    400008: feather_small
+    400010: gem_hat
+    400012: //RootNode
+    400014: hat_pointy
+    400016: hay
+    400018: moon_sign_hat
+    400020: patch
+    400022: patch_curve
+    400024: patch_sewing
+    400026: pointy_sew_curve
+    400028: rope_hat
+    400030: sew_curve_01
+    400032: sew_curve_02
+    400034: sew_curve_03
+    400036: sew_curve_04
+    400038: sewing_hat_01
+    400040: sewing_hat_02
+    400042: sewing_hat_03
+    400044: sewing_hat_04
+    400046: sewing_pointy_hat
+    400048: straps_hat
+    400050: wrapping_hat
+    2300000: feather_balls
+    2300002: feather_big
+    2300004: feather_pendant
+    2300006: feather_pendant_buckle
+    2300008: feather_small
+    2300010: gem_hat
+    2300012: //RootNode
+    2300014: hat_pointy
+    2300016: hay
+    2300018: moon_sign_hat
+    2300020: patch
+    2300022: patch_curve
+    2300024: patch_sewing
+    2300026: pointy_sew_curve
+    2300028: rope_hat
+    2300030: sew_curve_01
+    2300032: sew_curve_02
+    2300034: sew_curve_03
+    2300036: sew_curve_04
+    2300038: sewing_hat_01
+    2300040: sewing_hat_02
+    2300042: sewing_hat_03
+    2300044: sewing_hat_04
+    2300046: sewing_pointy_hat
+    2300048: straps_hat
+    2300050: wrapping_hat
+    3300000: feather_balls
+    3300002: feather_big
+    3300004: feather_pendant
+    3300006: feather_pendant_buckle
+    3300008: feather_small
+    3300010: gem_hat
+    3300012: //RootNode
+    3300014: hat_pointy
+    3300016: hay
+    3300018: moon_sign_hat
+    3300020: patch
+    3300022: patch_curve
+    3300024: patch_sewing
+    3300026: pointy_sew_curve
+    3300028: rope_hat
+    3300030: sew_curve_01
+    3300032: sew_curve_02
+    3300034: sew_curve_03
+    3300036: sew_curve_04
+    3300038: sewing_hat_01
+    3300040: sewing_hat_02
+    3300042: sewing_hat_03
+    3300044: sewing_hat_04
+    3300046: sewing_pointy_hat
+    3300048: straps_hat
+    3300050: wrapping_hat
+    4300000: hat
+    4300002: hay
+    4300004: patch
+    4300006: patch_sewing
+    4300008: patch_curve
+    4300010: sewing_hat_03
+    4300012: sew_curve_03
+    4300014: sewing_hat_02
+    4300016: sew_curve_02
+    4300018: sewing_hat_01
+    4300020: sew_curve_01
+    4300022: sewing_hat_04
+    4300024: sew_curve_04
+    4300026: feather_pendant
+    4300028: feather_balls
+    4300030: feather_small
+    4300032: feather_big
+    4300034: feather_pendant_buckle
+    4300036: straps_hat
+    4300038: rope_hat
+    4300040: gem_hat
+    4300042: hat_pointy
+    4300044: sewing_pointy_hat
+    4300046: pointy_sew_curve
+    4300048: moon_sign_hat
+    4300050: wrapping_hat
+    7400000: Default Take
+    9500000: //RootNode
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
