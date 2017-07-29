@@ -7,18 +7,24 @@ public class TetrisMachine : MonoBehaviour {
     //CONSTANTS
     protected const float radius = 0.5f;
 
-    public struct PieceValues
+    public struct PieceState
     {
-        public int[,,] blocks;
+        public Piece piece;
+        public Vector3 destination;
+        public float percentage;
+        public float goal;
 
-        public PieceValues(int[,,] values)
-        {
-            blocks = values;
+        public PieceState(Piece piece, Vector3 destination, float goal) {
+            this.piece = piece;
+            this.destination = destination;
+            this.goal = goal;
+            percentage = 0f;
         }
     }
 
+
     [SerializeField]
-    protected int pieceSlots;
+    protected int maxPieces;
 
     [SerializeField]
     protected GameObject piece;
@@ -33,20 +39,25 @@ public class TetrisMachine : MonoBehaviour {
     protected float[] spawnrate;
     [SerializeField]
     protected float conveyorSpeed;
-    [SerializeField]
-    protected int maxPieces;
+
 
     protected int currentPieces;
     protected ConveyorBeltPiece[] conveyorBelt;
+    protected PieceState[] pieces;
 
     void Start() {
-        generateDebugPiece();
-        generatePiece();
         initialize();
+        InvokeRepeating("generatePiece", 2f, 2f);
+        generateDebugPiece();
     }
 
     void Update() {
-
+        for (int i = 0; i < currentPieces; i++) {
+            if (pieces[i].piece != null && pieces[i].percentage < 1f) {
+                pieces[i].percentage += conveyorSpeed * Time.deltaTime;
+                pieces[i].piece.transform.position = Vector3.Lerp(spawnpoint.position, pieces[i].destination, Mathf.Clamp01(pieces[i].percentage / pieces[i].goal));
+            }
+        }
     }
 
     //METHODS
@@ -57,7 +68,7 @@ public class TetrisMachine : MonoBehaviour {
         drawDebugPiece(parsePiece(randomPiece));
     }
 
-    private void drawDebugPiece(PieceValues pieceValues) {
+    private void drawDebugPiece(Piece.PieceValues pieceValues) {
 
         float cubeRadius = 0.5f;
         float duration = 2048f;
@@ -87,8 +98,20 @@ public class TetrisMachine : MonoBehaviour {
     //ADD AND REMOVE BLOCKS AT RUNTIME
 
     public void generatePiece() {
-        GameObject GOPiece = Instantiate(piece, spawnpoint.position, Quaternion.identity);
-        GOPiece.GetComponent<TetrisBlock>().generate(selectRandomPiece(), radius);
+        if (currentPieces < maxPieces) {
+            currentPieces++;
+            GameObject GOPiece = Instantiate(piece, spawnpoint.position, Quaternion.identity);
+            Piece pieceScript = GOPiece.GetComponent<Piece>();
+            pieceScript.setTetrisMachine(this);
+            pieceScript.generate(selectRandomPiece(), radius);
+            pieceScript.initialize();
+            PieceState P = new PieceState(pieceScript, getPieceDestination(), 1f - ((1f / maxPieces) * (getPieceSlot() - 1)));
+            pieces[currentPieces - 1] = P;
+        }
+    }
+
+    public void removePiece(Piece p) {
+
     }
 
     public void addCurrentPiece()
@@ -104,18 +127,20 @@ public class TetrisMachine : MonoBehaviour {
     //PROTECTED
 
     protected void initialize() {
-        conveyorBelt = new ConveyorBeltPiece[pieceSlots];
-        deployConveyorBelt(pieceSlots);
+        currentPieces = 0;
+        conveyorBelt = new ConveyorBeltPiece[maxPieces];
+        pieces = new PieceState[maxPieces];
+        deployConveyorBelt(maxPieces);
     }
 
     protected void deployConveyorBelt(int length) {
         for (int i = 0; i < length; i++) {
-            GameObject GOConveyor = Instantiate(conveyorBeltPiece, transform.position + transform.forward * (i + radius * 3), transform.rotation);
+            GameObject GOConveyor = Instantiate(conveyorBeltPiece, transform.position + transform.forward * (i * radius * 6 + radius * 9), transform.rotation);
             conveyorBelt[i] = GOConveyor.GetComponent<ConveyorBeltPiece>();
         }
     }
 
-    protected PieceValues selectRandomPiece() {
+    protected Piece.PieceValues selectRandomPiece() {
         return parsePiece(getRandomPieceIndex());
     }
 
@@ -130,7 +155,7 @@ public class TetrisMachine : MonoBehaviour {
         return 0;
     }
 
-    protected PieceValues parsePiece(int index)
+    protected Piece.PieceValues parsePiece(int index)
     {
         string text = blocks[index].text;
         string[] fields = text.Split(';');
@@ -160,9 +185,18 @@ public class TetrisMachine : MonoBehaviour {
             }
         }
 
-        PieceValues pieceValues = new PieceValues(values);
+        Piece.PieceValues pieceValues = new Piece.PieceValues(values);
         return pieceValues;
     }
+
+    protected Vector3 getPieceDestination() {
+        return conveyorBelt[maxPieces - (currentPieces)].getRestPosition().position;
+    }
+
+    protected int getPieceSlot() {
+        return currentPieces;
+    }
+
 
     //GETTERS & SETTERS
     public float[] getSpawnRates()

@@ -7,7 +7,7 @@ public class TetrisBlock : MonoBehaviour {
     [SerializeField]
     GameObject block;
 
-    public void generate(TetrisMachine.PieceValues values, float radius) {
+    public void generate(Piece.PieceValues values, float radius) {
 
         int x = values.blocks.GetLength(0);
         int y = values.blocks.GetLength(1);
