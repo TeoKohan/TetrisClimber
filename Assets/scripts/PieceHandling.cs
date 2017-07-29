@@ -22,6 +22,7 @@ public class PieceHandling : MonoBehaviour {
         if (piecePivot.childCount > 0)
         {
             CheckForPlacingSpace();
+            CheckForRotation();
         }
 
 
@@ -99,5 +100,27 @@ public class PieceHandling : MonoBehaviour {
         }
     }
 
+
+
+    void CheckForRotation()
+    {
+        GameObject piece = piecePivot.GetChild(0).gameObject;
+        Piece p = piece.GetComponent<Piece>();
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            p.RotateInX();
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            p.RotateInY();
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            p.RotateInZ();
+        }
+    }
 
 }
