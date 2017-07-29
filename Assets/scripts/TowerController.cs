@@ -189,7 +189,7 @@ public class TowerController : MonoBehaviour {
 
 
 
-    private int3 CoordinatesOf<T>(this T[,,] matrix, T value)
+    public static int3 CoordinatesOf<T>(T[,,] matrix, T value)
     {
         int w = matrix.GetLength(0); // width
         int h = matrix.GetLength(1); // height
