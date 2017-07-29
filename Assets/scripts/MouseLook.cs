@@ -16,6 +16,7 @@ public class MouseLook : MonoBehaviour{
     public bool lockCursor = true;
 
     public float xmouse;
+    public float ymouse;
 
     [SerializeField] Transform character;
     [SerializeField] Transform camera;
@@ -31,8 +32,12 @@ public class MouseLook : MonoBehaviour{
         m_CameraTargetRot = camera.localRotation;
     }
 
+    private void Update()
+    {
+        LookRotation(character, camera);
+    }
 
-    public void LookRotation()
+    public void LookRotation(Transform character, Transform camera)
     {
         float yRot = Input.GetAxis("Mouse X") * XSensitivity;
         float xRot = Input.GetAxis("Mouse Y") * YSensitivity;
@@ -57,6 +62,7 @@ public class MouseLook : MonoBehaviour{
         }
 
         UpdateCursorLock();
+
     }
 
     public void SetCursorLock(bool value)
