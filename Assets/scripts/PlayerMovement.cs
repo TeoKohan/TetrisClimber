@@ -45,15 +45,17 @@ public class PlayerMovement : MonoBehaviour {
         Vector3 movement = freeFallSpeed * Vector3.down;
 
         float mov = Input.GetAxis("Vertical") * speed;
+        float starfe = Input.GetAxis("Horizontal") * speed;
         movement += mov * transform.forward * Time.deltaTime;
+        movement += starfe * transform.right * Time.deltaTime;
 
         cc.Move(movement);
-        
-        float rotationMovementX = Input.GetAxis("Horizontal") * rotationSpeed;
-        transform.Rotate(new Vector3(0, rotationMovementX * Time.deltaTime, 0));
 
-        float rotationMovementY = Input.GetAxis("Mouse Y") * rotationSpeed * (-1);
-        Camera.main.transform.Rotate(new Vector3(rotationMovementY * Time.deltaTime, 0, 0));
+        /* float rotationMovementX = Input.GetAxis("Horizontal") * rotationSpeed;
+        transform.Rotate(new Vector3(0, rotationMovementX * Time.deltaTime, 0)); */
+
+        /* float rotationMovementY = Input.GetAxis("Mouse Y") * rotationSpeed * (-1);
+        Camera.main.transform.Rotate(new Vector3(rotationMovementY * Time.deltaTime, 0, 0)); */
 
 
     }
