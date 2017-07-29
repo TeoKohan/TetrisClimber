@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TowerController : MonoBehaviour {
 
-    private TowerController instance;
+    static public TowerController instance;
     private bool[,,] floorSpaces;
 
     [SerializeField]
