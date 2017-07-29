@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class TetrisMachine : MonoBehaviour {
 
+    //CONSTANTS
+    protected const float radius = 0.5f;
+
     public struct PieceValues
     {
         public int[,,] blocks;
@@ -15,6 +18,16 @@ public class TetrisMachine : MonoBehaviour {
     }
 
     [SerializeField]
+    protected int pieceSlots;
+
+    [SerializeField]
+    protected GameObject piece;
+    [SerializeField]
+    protected GameObject conveyorBeltPiece;
+
+    [SerializeField]
+    protected Transform spawnpoint;
+    [SerializeField]
     protected TextAsset[] blocks;
     [SerializeField]
     protected float[] spawnrate;
@@ -22,11 +35,14 @@ public class TetrisMachine : MonoBehaviour {
     protected float conveyorSpeed;
     [SerializeField]
     protected int maxPieces;
-    [SerializeField]
+
     protected int currentPieces;
+    protected ConveyorBeltPiece[] conveyorBelt;
 
     void Start() {
         generateDebugPiece();
+        generatePiece();
+        initialize();
     }
 
     void Update() {
@@ -37,7 +53,7 @@ public class TetrisMachine : MonoBehaviour {
 
     //DEBUG
     private void generateDebugPiece() {
-        int randomPiece = getRandomPiece();
+        int randomPiece = getRandomPieceIndex();
         drawDebugPiece(parsePiece(randomPiece));
     }
 
@@ -71,10 +87,8 @@ public class TetrisMachine : MonoBehaviour {
     //ADD AND REMOVE BLOCKS AT RUNTIME
 
     public void generatePiece() {
-        //TODO:
-        //INSTANTIATE PIECE GAMEOBJECT
-        //PASS PIECEVALUES TO INSTANTIATED GAMEOBJECT
-        //RUN GENERATE ON INSTANTIATED PIECE COMPONENT
+        GameObject GOPiece = Instantiate(piece, spawnpoint.position, Quaternion.identity);
+        GOPiece.GetComponent<TetrisBlock>().generate(selectRandomPiece(), radius);
     }
 
     public void addCurrentPiece()
@@ -88,7 +102,24 @@ public class TetrisMachine : MonoBehaviour {
     }
 
     //PROTECTED
-    protected int getRandomPiece() {
+
+    protected void initialize() {
+        conveyorBelt = new ConveyorBeltPiece[pieceSlots];
+        deployConveyorBelt(pieceSlots);
+    }
+
+    protected void deployConveyorBelt(int length) {
+        for (int i = 0; i < length; i++) {
+            GameObject GOConveyor = Instantiate(conveyorBeltPiece, transform.position + transform.forward * (i + radius * 3), transform.rotation);
+            conveyorBelt[i] = GOConveyor.GetComponent<ConveyorBeltPiece>();
+        }
+    }
+
+    protected PieceValues selectRandomPiece() {
+        return parsePiece(getRandomPieceIndex());
+    }
+
+    protected int getRandomPieceIndex() {
         float randomValue = Random.Range(0f, 100f);
 
         float percent = 0f;

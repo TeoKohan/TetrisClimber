@@ -90,7 +90,7 @@ MonoBehaviour:
   m_MinSize: {x: 711, y: 492}
   m_MaxSize: {x: 18006, y: 14042}
   vertical: 0
-  controlID: 9
+  controlID: 31
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -160,7 +160,7 @@ MonoBehaviour:
   m_MinSize: {x: 234, y: 492}
   m_MaxSize: {x: 10004, y: 14042}
   vertical: 1
-  controlID: 45
+  controlID: 10
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -307,18 +307,18 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/scripts
+    - Assets/models
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/scripts
+  - Assets/models
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\teoko\Documents\GitHub\LudumDare39\UnityLudumDare39
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 24260000
-    m_LastClickedID: 9764
+    m_SelectedIDs: 40260000
+    m_LastClickedID: 9792
     m_ExpandedIDs: 00000000162600002426000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -374,7 +374,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 1
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: 
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -505,14 +505,14 @@ MonoBehaviour:
     width: 710
     height: 746
   m_SceneLighting: 1
-  lastFramingTime: 0
+  lastFramingTime: 5398.339702196478
   m_2DMode: 0
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -0.08997452, y: 1.444833, z: -0.032032967}
+    m_Target: {x: 10.447611, y: 1.5774043, z: 1.366276}
     speed: 2
-    m_Value: {x: -0.08997452, y: 1.444833, z: -0.032032967}
+    m_Value: {x: 10.447611, y: 1.5774043, z: 1.366276}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -535,13 +535,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: -0.12150648, y: -0.0053583323, z: 0.00067074696, w: -0.99257225}
+    m_Target: {x: 0.044164322, y: -0.9551469, z: 0.22495806, w: 0.18744403}
     speed: 2
-    m_Value: {x: -0.12150693, y: -0.0053583523, z: 0.00067074946, w: -0.99257594}
+    m_Value: {x: 0.04416438, y: -0.9551481, z: 0.22495835, w: 0.18744427}
   m_Size:
-    m_Target: 9.693669
+    m_Target: 9.92264
     speed: 2
-    m_Value: 9.693669
+    m_Value: 9.92264
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -580,9 +580,9 @@ MonoBehaviour:
     height: 316
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: a2d4ffff
-    m_LastClickedID: -11102
-    m_ExpandedIDs: 1afcffff00000000
+    m_SelectedIDs: 72260000
+    m_LastClickedID: 9842
+    m_ExpandedIDs: 8433feff12b6feff38ccfeffc4e8fefffc9fffff3eb2ffffa6cbffffc6d1ffff18fcffff1afcffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -598,7 +598,7 @@ MonoBehaviour:
       m_IsRenaming: 0
       m_OriginalEventType: 11
       m_IsRenamingFilename: 0
-      m_ClientGUIView: {fileID: 0}
+      m_ClientGUIView: {fileID: 9}
     m_SearchString: 
   m_ExpandedScenes:
   - default
