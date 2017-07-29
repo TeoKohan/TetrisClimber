@@ -145,7 +145,7 @@ public class TowerController : MonoBehaviour {
                 for (var z = 0; z < zSize; z++)
                 {
                     // if there's a cube in the spot and I haven't checked that piece yet, find its piece
-                    if (floorSpaces[x, y, z] > 0 && checkedPieces.FindAll(i => i == floorSpaces[x, y, z]).Count > 0)
+                    if (floorSpaces[x, y, z] >= 0 && checkedPieces.FindAll(i => i == floorSpaces[x, y, z]).Count <= 0)
                     {
                         Piece piece = pieces.Find(p => p.getID() == floorSpaces[x, y, z]);
                         bool goesDown = true;
