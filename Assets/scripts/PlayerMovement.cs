@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField]
     private float jumpSpeed;
 
+
     // Use this for initialization
     void Awake()
     {
@@ -54,7 +55,7 @@ public class PlayerMovement : MonoBehaviour {
         float rotationMovementY = Input.GetAxis("Mouse Y") * rotationSpeed * (-1);
         Camera.main.transform.Rotate(new Vector3(rotationMovementY * Time.deltaTime, 0, 0));
 
-        
+
     }
 
 }
