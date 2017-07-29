@@ -15,6 +15,8 @@ public class MouseLook : MonoBehaviour{
     public float smoothTime = 5f;
     public bool lockCursor = true;
 
+    public float xmouse;
+
     [SerializeField] Transform character;
     [SerializeField] Transform camera;
 
