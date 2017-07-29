@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class ConveyorBeltPiece : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	[SerializeField]
+    protected Transform restPosition;
+
+    public Transform getRestPosition() {
+        return restPosition;
+    }
 }
