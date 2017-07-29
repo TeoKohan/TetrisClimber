@@ -4,7 +4,7 @@ using UnityEngine;
 public class TowerController : MonoBehaviour {
 
     static public TowerController instance;
-    private bool[,,] floorSpaces;
+    private int[,,] floorSpaces;
 
     [SerializeField]
     private int xSize;
@@ -23,7 +23,7 @@ public class TowerController : MonoBehaviour {
         } else
         {
             instance = this;
-            floorSpaces = new bool[xSize,ySize,zSize];
+            floorSpaces = new int[xSize,ySize,zSize];
 
             //we modify the boxcollider to pick up clicks in the tower
             gameObject.GetComponent<BoxCollider>().center = new Vector3(xSize / 2, ySize/2, zSize/2);
@@ -61,7 +61,7 @@ public class TowerController : MonoBehaviour {
                     {
                         // if there's a cube in the piece AND there's a cube in the floor
                         if (piece[x,y,z] && 
-                            floorSpaces[position[0]+z, position[1]+y, position[2]+z])
+                            floorSpaces[position[0]+z, position[1]+y, position[2]+z] > 0)
                         {
                             //break!
                             return false;
@@ -84,7 +84,7 @@ public class TowerController : MonoBehaviour {
     // position: the position within the tower that was clicked by the user
     // returns the vector3 for the desired position of the piece
 
-    public Vector3 PlacePiece(bool[,,] piece, int[] position)
+    public Vector3 PlacePiece(bool[,,] piece, int[] position, int pieceId)
     {
         //assuming the desired reference point in the piece is 0,0,0
         for (var x = 0; x < xSize; x++)
@@ -96,7 +96,7 @@ public class TowerController : MonoBehaviour {
                     // if there's a cube in the piece, set it in the matrix
                     if (piece[x, y, z])
                     {
-                        floorSpaces[position[0] + z, position[1] + y, position[2] + z] = true;
+                        floorSpaces[position[0] + z, position[1] + y, position[2] + z] = pieceId;
                     }
                 }
             }
@@ -111,6 +111,16 @@ public class TowerController : MonoBehaviour {
 
 
     
+
+    // CHECK BLOCK STATUS
+
+    // This method is meant to be run anytime that someone wants to see if pieces must fall in the tower
+    // WARNING! This method is recursive and will run until no pieces can fall!
+
+    public void CheckBlockStatus()
+    {
+        
+    }
     
 
 
