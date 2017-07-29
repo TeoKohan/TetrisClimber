@@ -12,6 +12,8 @@ public class TowerController : MonoBehaviour {
     private int ySize;
     [SerializeField]
     private int zSize;
+    [SerializeField]
+    private Transform floorGraphic;
 
     void Awake()
     {
@@ -22,12 +24,20 @@ public class TowerController : MonoBehaviour {
         {
             instance = this;
             floorSpaces = new bool[xSize,ySize,zSize];
+
+            //we modify the boxcollider to pick up clicks in the tower
+            gameObject.GetComponent<BoxCollider>().center = new Vector3(xSize / 2, ySize/2, zSize/2);
+            gameObject.GetComponent<BoxCollider>().size = new Vector3(xSize, ySize, zSize);
+
+            //and make the graphic base larger
+            floorGraphic.localPosition = new Vector3(xSize / 2, floorGraphic.localPosition.y, zSize / 2);
+            floorGraphic.localScale = new Vector3(xSize, floorGraphic.localScale.y, zSize);
         }
     }
 
 
 
-    // CHECKFORPLACE
+    // CHECK FOR PLACE
 
     //This method will tell you if there's enough space in the tower for the piece you want to place
     // piece: the matrix for any given piece
@@ -59,13 +69,14 @@ public class TowerController : MonoBehaviour {
 
 
 
-    //PLACEPIECE
+    //PLACE PIECE
 
     //This method effectively sets a piece in the tower
     // piece: the matrix for any given piece
     // position: the position within the tower that was clicked by the user
+    // returns the vector3 for the desired position of the piece
 
-    public void PlacePiece(bool[,,] piece, int[] position)
+    public Vector3 PlacePiece(bool[,,] piece, int[] position)
     {
         //assuming the desired reference point in the piece is 0,0,0
         for (var x = 0; x < xSize; x++)
@@ -82,8 +93,17 @@ public class TowerController : MonoBehaviour {
                 }
             }
         }
+
+        // assuming the piece model always has its maximum size
+        Vector3 piecePosition = new Vector3(piece.GetLength(0) / 2, piece.GetLength(1) / 2, piece.GetLength(2) / 2);
+        piecePosition += transform.position + new Vector3(position[0], position[1], position[2]);
+
+        return piecePosition;
     }
 
+
+    
+    
 
 
 }
