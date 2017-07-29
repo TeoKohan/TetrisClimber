@@ -25,6 +25,7 @@ public class Piece : MonoBehaviour {
     protected TetrisMachine parentMachine;
     protected bool[,,] pieceValues;
     protected int id;
+    protected int blockAmount;
     protected int timer;
     int3 pieceSize;
 
@@ -39,6 +40,8 @@ public class Piece : MonoBehaviour {
 
         //Vector3 offset = new Vector3(-1f, 1f, 1f);
 
+        blockAmount = 0;
+
         for (int u = 0; u < x; u++)
         {
             for (int v = 0; v < y; v++)
@@ -51,6 +54,7 @@ public class Piece : MonoBehaviour {
                         pieceValues[u, v, w] = true;
                         GameObject GOBlock = Instantiate(block, transform.position + (new Vector3(-u, v, w) * radius * 2), Quaternion.identity);
                         GOBlock.transform.parent = this.transform;
+                        blockAmount++;
                         //PASS DURATION TO BLOCK COMPONENT
                     }
                     else { pieceValues[u, v, w] = false; }
@@ -60,7 +64,7 @@ public class Piece : MonoBehaviour {
     }
 
     public void initialize() {
-        Invoke("pickUp", Random.Range(1f, 10f));
+        Invoke("pickUp", Random.Range(1f, 5f));
     }
 
     public void goDown() {
@@ -95,12 +99,18 @@ public class Piece : MonoBehaviour {
 
     public void pickUp() {
         //TODO MAKE OTHER STUFF
+        parentMachine.removePiece(this);
         Destroy(gameObject);
     }
 
     public int getID()
     {
         return id;
+    }
+
+    public int getBlockAmount()
+    {
+        return blockAmount;
     }
 
     public bool[,,] getMatrix() {

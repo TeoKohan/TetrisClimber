@@ -157,6 +157,10 @@ Prefab:
       propertyPath: maxPieces
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 4545877167553378, guid: 1c6fcc313bd2faf4a82741400982549f, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1c6fcc313bd2faf4a82741400982549f, type: 2}
   m_IsPrefabParent: 0
