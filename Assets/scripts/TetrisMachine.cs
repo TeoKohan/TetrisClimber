@@ -7,16 +7,6 @@ public class TetrisMachine : MonoBehaviour {
     //CONSTANTS
     protected const float radius = 0.5f;
 
-    public struct PieceValues
-    {
-        public int[,,] blocks;
-
-        public PieceValues(int[,,] values)
-        {
-            blocks = values;
-        }
-    }
-
     public struct PieceState
     {
         public Piece piece;
@@ -78,7 +68,7 @@ public class TetrisMachine : MonoBehaviour {
         drawDebugPiece(parsePiece(randomPiece));
     }
 
-    private void drawDebugPiece(PieceValues pieceValues) {
+    private void drawDebugPiece(Piece.PieceValues pieceValues) {
 
         float cubeRadius = 0.5f;
         float duration = 2048f;
@@ -112,11 +102,16 @@ public class TetrisMachine : MonoBehaviour {
             currentPieces++;
             GameObject GOPiece = Instantiate(piece, spawnpoint.position, Quaternion.identity);
             Piece pieceScript = GOPiece.GetComponent<Piece>();
+            pieceScript.setTetrisMachine(this);
             pieceScript.generate(selectRandomPiece(), radius);
             pieceScript.initialize();
             PieceState P = new PieceState(pieceScript, getPieceDestination(), 1f - ((1f / maxPieces) * (getPieceSlot() - 1)));
             pieces[currentPieces - 1] = P;
         }
+    }
+
+    public void removePiece(Piece p) {
+
     }
 
     public void addCurrentPiece()
@@ -145,7 +140,7 @@ public class TetrisMachine : MonoBehaviour {
         }
     }
 
-    protected PieceValues selectRandomPiece() {
+    protected Piece.PieceValues selectRandomPiece() {
         return parsePiece(getRandomPieceIndex());
     }
 
@@ -160,7 +155,7 @@ public class TetrisMachine : MonoBehaviour {
         return 0;
     }
 
-    protected PieceValues parsePiece(int index)
+    protected Piece.PieceValues parsePiece(int index)
     {
         string text = blocks[index].text;
         string[] fields = text.Split(';');
@@ -190,7 +185,7 @@ public class TetrisMachine : MonoBehaviour {
             }
         }
 
-        PieceValues pieceValues = new PieceValues(values);
+        Piece.PieceValues pieceValues = new Piece.PieceValues(values);
         return pieceValues;
     }
 

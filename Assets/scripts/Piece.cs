@@ -15,17 +15,29 @@ public class Piece : MonoBehaviour {
 
     }
 
+    public struct PieceValues
+    {
+        public int[,,] blocks;
+
+        public PieceValues(int[,,] values)
+        {
+            blocks = values;
+        }
+    }
+
     [SerializeField]
     GameObject block;
 
     //[SerializeField] GameObject property;
-    [SerializeField] int destructionTime;
+    [SerializeField]
+    int destructionTime;
 
-    protected bool[,,] matrix;
+    protected TetrisMachine parentMachine;
+    protected PieceValues[,,] pieceValues;
     protected int timer;
     int3 pieceSize;
 
-    public void generate(TetrisMachine.PieceValues values, float radius)
+        public void generate(PieceValues values, float radius)
     {
 
         int x = values.blocks.GetLength(0);
@@ -74,6 +86,15 @@ public class Piece : MonoBehaviour {
         return pieceSize;
     }
 
+    public void RotateInX() {
+    }
+
+    public void RotateInY() {
+    }
+
+    public void RotateInZ() {
+    }
+
     public void validPlaceFound() {
 
     }
@@ -85,5 +106,15 @@ public class Piece : MonoBehaviour {
     public void pickUp() {
         //TODO MAKE OTHER STUFF
         Destroy(gameObject);
+    }
+
+    public TetrisMachine getTetrisMachine()
+    {
+        return parentMachine;
+    }
+
+    public void setTetrisMachine(TetrisMachine tetrisMachine)
+    {
+        parentMachine = tetrisMachine;
     }
 }
