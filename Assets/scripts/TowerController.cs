@@ -168,8 +168,10 @@ public class TowerController : MonoBehaviour {
                         for ( var i = 0; i < piece.getBlockAmount(); i++)
                         {
                             int3 coord = CoordinatesOf<int>(floorSpaces, floorSpaces[x, y, z]);
+                            //if the block's not at the bottom, it may need to go down
                             if (coord.y != 0) { 
                                 coord = new int3(coord.x, coord.y - 1, coord.z);
+                                // if the coordinates BELOW that block is occupied, it can't go down
                                 if (floorSpaces[coord.x, coord.y, coord.z] >=0) {
                                     goesDown = false;
                                     checkedPieces.Add(piece.getID());
@@ -178,6 +180,7 @@ public class TowerController : MonoBehaviour {
                             }
                             else
                             {
+                                //if the block's at the bottom, it can't possibly go down.
                                 goesDown = false;
                                 checkedPieces.Add(piece.getID());
                                 break;
