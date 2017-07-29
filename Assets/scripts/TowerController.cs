@@ -37,7 +37,20 @@ public class TowerController : MonoBehaviour {
         } else
         {
             instance = this;
+
+            //let's set up the slot matrix
             floorSpaces = new int[xSize,ySize,zSize];
+            for (int x = 0; x < xSize; x++)
+            {
+                for (int y = 0; y < ySize; y++)
+                {
+                    for (int z = 0; z < zSize; z++)
+                    {
+                        floorSpaces[x, y, z] = -1;
+                    }
+                }
+            }
+            //and the list for all involved pieces
             pieces = new List<Piece>();
 
             //we modify the boxcollider to pick up clicks in the tower
@@ -135,9 +148,10 @@ public class TowerController : MonoBehaviour {
 
     public void CheckBlockStatus()
     {
-
+        // we'll use some basic variables to optimize this beauty
         List<int> checkedPieces = new List<int>();
         bool somethingWentDown = false;
+
         for (var x = 0; x < xSize; x++)
         {
             for (var y = 0; y < ySize; y++)
@@ -149,6 +163,8 @@ public class TowerController : MonoBehaviour {
                     {
                         Piece piece = pieces.Find(p => p.getID() == floorSpaces[x, y, z]);
                         bool goesDown = true;
+
+                        //for all pieces in the block, check if they can go down
                         for ( var i = 0; i < piece.getBlockAmount(); i++)
                         {
                             int3 coord = CoordinatesOf<int>(floorSpaces, floorSpaces[x, y, z]);
@@ -168,11 +184,14 @@ public class TowerController : MonoBehaviour {
                             }
                         }
                         
+                        //if the piece can go down, then it should
                         if (goesDown)
                         {
                             piece.goDown();
                             somethingWentDown = true;
                         }
+
+                        //anyway, we've checked this one
                         checkedPieces.Add(piece.getID());
 
                     }
@@ -180,6 +199,7 @@ public class TowerController : MonoBehaviour {
             }
         }
 
+        //if anything moved down, then we have to recheck everything just in case. Yikes!
         if (somethingWentDown)
         {
             CheckBlockStatus();
@@ -188,7 +208,7 @@ public class TowerController : MonoBehaviour {
     }
 
 
-
+    //accessory method for the CheckBlockStatus method, pretty useful shit!
     public static int3 CoordinatesOf<T>(T[,,] matrix, T value)
     {
         int w = matrix.GetLength(0); // width
