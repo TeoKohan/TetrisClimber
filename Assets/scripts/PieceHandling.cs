@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PieceHandling : MonoBehaviour {
 
@@ -72,8 +70,9 @@ public class PieceHandling : MonoBehaviour {
             Mathf.FloorToInt(point.z)};
         if(TowerController.instance.CheckForPlace(p.getMatrix(), position))
         {
-            TowerController.instance.PlacePiece(p.getMatrix(), position);
-            piece.transform.parent = null;
+            Vector3 newPosition = TowerController.instance.PlacePiece(p, position);
+            piece.transform.parent = TowerController.instance.transform;
+            piece.transform.position = newPosition;
         } 
     }
     
