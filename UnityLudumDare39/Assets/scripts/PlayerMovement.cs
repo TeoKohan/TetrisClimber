@@ -7,7 +7,6 @@ public class PlayerMovement : MonoBehaviour {
     private float freeFallSpeed;
     private Animator anim;
     private CharacterController cc;
-    private float savedGravity;
 
     [SerializeField]
     private float speed;
@@ -23,7 +22,6 @@ public class PlayerMovement : MonoBehaviour {
     void Awake()
     {
         cc = GetComponent<CharacterController>();
-        savedGravity = gravity;
     }
 
     // Update is called once per frame
@@ -51,9 +49,11 @@ public class PlayerMovement : MonoBehaviour {
 
         cc.Move(movement);
         
-        float rotationMovement = Input.GetAxis("Horizontal") * rotationSpeed;
-        //cc.angularVelocity =new Vector3(0, rotationMovement, 0);
-        transform.Rotate(new Vector3(0, rotationMovement * Time.deltaTime, 0));
+        float rotationMovementX = Input.GetAxis("Horizontal") * rotationSpeed;
+        transform.Rotate(new Vector3(0, rotationMovementX * Time.deltaTime, 0));
+
+        float rotationMovementY = Input.GetAxis("Mouse Y") * rotationSpeed * (-1);
+        Camera.main.transform.Rotate(new Vector3(rotationMovementY * Time.deltaTime, 0, 0));
 
 
     }
