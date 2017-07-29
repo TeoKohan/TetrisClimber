@@ -45,19 +45,27 @@ public class TowerController : MonoBehaviour {
 
     public bool CheckForPlace(bool[,,] piece, int[] position)
     {
-        //assuming the desired reference point in the piece is 0,0,0
-        for (var x = 0; x < xSize; x++)
-        {
-            for (var y = 0; y < ySize; y++)
+        // Exception logic: if the piece is too big, it shouldn't fit
+        if (piece.GetLength(0) + position[0] > floorSpaces.GetLength(0) ||
+            piece.GetLength(1) + position[1] > floorSpaces.GetLength(1) ||
+            piece.GetLength(2) + position[2] > floorSpaces.GetLength(2)) {
+
+            return false;
+        } else {
+            //assuming the desired reference point in the piece is 0,0,0
+            for (var x = 0; x < xSize; x++)
             {
-                for (var z = 0; z < zSize; z++)
+                for (var y = 0; y < ySize; y++)
                 {
-                    // if there's a cube in the piece AND there's a cube in the floor
-                    if (piece[x,y,z] && 
-                        floorSpaces[position[0]+z, position[1]+y, position[2]+z])
+                    for (var z = 0; z < zSize; z++)
                     {
-                        //break!
-                        return false;
+                        // if there's a cube in the piece AND there's a cube in the floor
+                        if (piece[x,y,z] && 
+                            floorSpaces[position[0]+z, position[1]+y, position[2]+z])
+                        {
+                            //break!
+                            return false;
+                        }
                     }
                 }
             }
