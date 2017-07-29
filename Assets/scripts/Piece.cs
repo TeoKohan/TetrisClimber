@@ -15,16 +15,6 @@ public class Piece : MonoBehaviour {
 
     }
 
-    public struct PieceValues
-    {
-        public int[,,] blocks;
-
-        public PieceValues(int[,,] values)
-        {
-            blocks = values;
-        }
-    }
-
     [SerializeField]
     GameObject block;
 
@@ -33,18 +23,19 @@ public class Piece : MonoBehaviour {
     int destructionTime;
 
     protected TetrisMachine parentMachine;
-    protected PieceValues[,,] pieceValues;
+    protected bool[,,] pieceValues;
+    protected int id;
     protected int timer;
     int3 pieceSize;
 
-        public void generate(PieceValues values, float radius)
-    {
+        public void generate(int[,,] values, float radius) {
 
-        int x = values.blocks.GetLength(0);
-        int y = values.blocks.GetLength(1);
-        int z = values.blocks.GetLength(2);
+        int x = values.GetLength(0);
+        int y = values.GetLength(1);
+        int z = values.GetLength(2);
 
         pieceSize = new int3(x, y, z);
+        pieceValues = new bool[x, y, z];
 
         //Vector3 offset = new Vector3(-1f, 1f, 1f);
 
@@ -54,13 +45,15 @@ public class Piece : MonoBehaviour {
             {
                 for (int w = 0; w < z; w++)
                 {
-                    if (values.blocks[u, v, w] == 1)
+                    if (values[u, v, w] >= 1)
                     {
                         //INVERT U TO GO RIGHT TO LEFT
+                        pieceValues[u, v, w] = true;
                         GameObject GOBlock = Instantiate(block, transform.position + (new Vector3(-u, v, w) * radius * 2), Quaternion.identity);
                         GOBlock.transform.parent = this.transform;
                         //PASS DURATION TO BLOCK COMPONENT
                     }
+                    else { pieceValues[u, v, w] = false; }
                 }
             }
         }
@@ -70,19 +63,16 @@ public class Piece : MonoBehaviour {
         Invoke("pickUp", Random.Range(1f, 10f));
     }
 
-    public void goDown()
-    {
+    public void goDown() {
         //here we execute de property just in case it's a magnet. --Pending--
         //Notify about the end of the animation
     }
 
-    public void reduceTimer()
-    {
+    public void reduceTimer() {
         timer--;
     }
 
-    public int3 getPieceSize()
-    {
+    public int3 getPieceSize() {
         return pieceSize;
     }
 
@@ -108,13 +98,20 @@ public class Piece : MonoBehaviour {
         Destroy(gameObject);
     }
 
-    public TetrisMachine getTetrisMachine()
+    public int getID()
     {
+        return id;
+    }
+
+    public bool[,,] getMatrix() {
+        return pieceValues;
+    }
+
+    public TetrisMachine getTetrisMachine() {
         return parentMachine;
     }
 
-    public void setTetrisMachine(TetrisMachine tetrisMachine)
-    {
+    public void setTetrisMachine(TetrisMachine tetrisMachine) {
         parentMachine = tetrisMachine;
     }
 }
