@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.45095325, g: 0.5008295, b: 0.57443905, a: 1}
+  m_IndirectSpecularColor: {r: 0.4509536, g: 0.5008298, b: 0.57444036, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -383,7 +383,6 @@ MonoBehaviour:
   smooth: 0
   smoothTime: 5
   lockCursor: 1
-  xmouse: 0
   character: {fileID: 470990592}
   camera: {fileID: 1073311899}
 --- !u!1 &1614531615
