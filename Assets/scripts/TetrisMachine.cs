@@ -68,13 +68,13 @@ public class TetrisMachine : MonoBehaviour {
         drawDebugPiece(parsePiece(randomPiece));
     }
 
-    private void drawDebugPiece(Piece.PieceValues pieceValues) {
+    private void drawDebugPiece(int[,,] pieceValues) {
 
         float cubeRadius = 0.5f;
         float duration = 2048f;
-        int x = pieceValues.blocks.GetLength(0);
-        int y = pieceValues.blocks.GetLength(1);
-        int z = pieceValues.blocks.GetLength(2);
+        int x = pieceValues.GetLength(0);
+        int y = pieceValues.GetLength(1);
+        int z = pieceValues.GetLength(2);
 
         for (int u = 0; u < x; u++)
         {
@@ -82,7 +82,7 @@ public class TetrisMachine : MonoBehaviour {
             {
                 for (int w = 0; w < z; w++)
                 {
-                    if (pieceValues.blocks[u, v, w] == 1)
+                    if (pieceValues[u, v, w] >= 1)
                     {
                         //SHOULD INVERT U TO GO RIGHT TO LEFT
                         DrawAssist.drawCube(new Vector3(u, v, w), cubeRadius, duration);
@@ -140,7 +140,7 @@ public class TetrisMachine : MonoBehaviour {
         }
     }
 
-    protected Piece.PieceValues selectRandomPiece() {
+    protected int[,,] selectRandomPiece() {
         return parsePiece(getRandomPieceIndex());
     }
 
@@ -155,7 +155,7 @@ public class TetrisMachine : MonoBehaviour {
         return 0;
     }
 
-    protected Piece.PieceValues parsePiece(int index)
+    protected int[,,] parsePiece(int index)
     {
         string text = blocks[index].text;
         string[] fields = text.Split(';');
@@ -185,8 +185,7 @@ public class TetrisMachine : MonoBehaviour {
             }
         }
 
-        Piece.PieceValues pieceValues = new Piece.PieceValues(values);
-        return pieceValues;
+        return values;
     }
 
     protected Vector3 getPieceDestination() {

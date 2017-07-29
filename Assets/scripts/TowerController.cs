@@ -5,6 +5,7 @@ public class TowerController : MonoBehaviour {
 
     static public TowerController instance;
     private int[,,] floorSpaces;
+    private List<Piece> pieces;
 
     [SerializeField]
     private int xSize;
@@ -84,7 +85,7 @@ public class TowerController : MonoBehaviour {
     // position: the position within the tower that was clicked by the user
     // returns the vector3 for the desired position of the piece
 
-    public Vector3 PlacePiece(bool[,,] piece, int[] position, int pieceId)
+    public Vector3 PlacePiece(Piece piece, int[] position, int pieceId)
     {
         //assuming the desired reference point in the piece is 0,0,0
         for (var x = 0; x < xSize; x++)
@@ -94,7 +95,7 @@ public class TowerController : MonoBehaviour {
                 for (var z = 0; z < zSize; z++)
                 {
                     // if there's a cube in the piece, set it in the matrix
-                    if (piece[x, y, z])
+                    if (piece.getMatrix()[x, y, z])
                     {
                         floorSpaces[position[0] + z, position[1] + y, position[2] + z] = pieceId;
                     }

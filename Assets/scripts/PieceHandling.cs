@@ -70,8 +70,9 @@ public class PieceHandling : MonoBehaviour {
             Mathf.FloorToInt(point.z)};
         if(TowerController.instance.CheckForPlace(p.getMatrix(), position))
         {
-            TowerController.instance.PlacePiece(p.getMatrix(), position, p.getId());
-            piece.transform.parent = null;
+            Vector3 newPosition = TowerController.instance.PlacePiece(p.getMatrix(), position, p.getID());
+            piece.transform.parent = TowerController.instance.transform;
+            piece.transform.position = newPosition;
         } 
     }
     
