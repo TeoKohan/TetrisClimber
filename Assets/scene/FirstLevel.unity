@@ -198,8 +198,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 470990592}
-  - component: {fileID: 470990594}
   - component: {fileID: 470990593}
+  - component: {fileID: 470990594}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -356,12 +356,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   XSensitivity: 2
   YSensitivity: 2
-  clampVerticalRotation: 0
+  clampVerticalRotation: 1
   MinimumX: -90
   MaximumX: 90
   smooth: 0
   smoothTime: 5
   lockCursor: 1
+  xmouse: 0
+  ymouse: 0
   character: {fileID: 470990592}
   camera: {fileID: 1073311899}
 --- !u!1 &1420095547
