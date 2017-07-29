@@ -29,7 +29,7 @@ public class Piece : MonoBehaviour {
     protected int timer;
     int3 pieceSize;
 
-        public void generate(int[,,] values, float radius) {
+    public void generate(int[,,] values, float radius) {
 
         int x = values.GetLength(0);
         int y = values.GetLength(1);
@@ -99,13 +99,22 @@ public class Piece : MonoBehaviour {
 
     public void pickUp() {
         //TODO MAKE OTHER STUFF
-        parentMachine.removePiece(this);
+        parentMachine.removePiece(id);
+        Debug.Log("Id to delte: " + id);
+    }
+
+    public void destroyPiece() {
         Destroy(gameObject);
     }
 
     public int getID()
     {
         return id;
+    }
+
+    public void setID(int id)
+    {
+        this.id = id;
     }
 
     public int getBlockAmount()

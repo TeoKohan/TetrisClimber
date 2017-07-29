@@ -11,13 +11,15 @@ public class TetrisMachine : MonoBehaviour {
     {
         public Piece piece;
         public Vector3 destination;
+        public int id;
         public int slot;
         public float percentage;
         public float goal;
 
-        public PieceState(Piece piece, Vector3 destination, int slot, float goal) {
+        public PieceState(Piece piece, Vector3 destination, int id, int slot, float goal) {
             this.piece = piece;
             this.destination = destination;
+            this.id = id;
             this.slot = slot;
             this.goal = goal;
             percentage = 0f;
@@ -48,6 +50,7 @@ public class TetrisMachine : MonoBehaviour {
     protected bool[] pieceSlots;
     protected ConveyorBeltPiece[] conveyorBelt;
     protected PieceState[] pieces;
+    protected int id;
 
     void Start() {
         initialize();
@@ -112,24 +115,34 @@ public class TetrisMachine : MonoBehaviour {
     public void generatePiece() {
         if (pieceSlots[maxPieces-1] == false) {
             addCurrentPiece();
+            int slot = getPieceSlot();
+            Debug.Log("Piece Slot " + slot );
+            pieceSlots[slot] = true;
             GameObject GOPiece = Instantiate(piece, spawnpoint.position, Quaternion.identity);
             Piece pieceScript = GOPiece.GetComponent<Piece>();
             pieceScript.setTetrisMachine(this);
             pieceScript.generate(selectRandomPiece(), radius);
+            pieceScript.setID(generateID());
             pieceScript.initialize();
-            int slot = getPieceSlot();
-            pieceSlots[slot] = true;
+            PieceState P = new PieceState(pieceScript, getPieceDestination(slot), pieceScript.getID(),  slot, 1f - ((1f / maxPieces) * (slot - 1)));
+
+            for (int i = 0; i < maxPieces; i++) {
+                if (pieces[i].piece == null) {
+                    pieces[i] = P;
+                }
+            }
+            
             debugSlots();
-            PieceState P = new PieceState(pieceScript, getPieceDestination(slot), slot, 1f - ((1f / maxPieces) * (getPieceSlot() - 1)));
-            pieces[currentPieces - 1] = P;
         }
     }
 
-    public void removePiece(Piece removePiece) {
+    public void removePiece(int removePieceID) {
         for (int i = 0; i < maxPieces; i++) {
-            if (removePiece == pieces[i].piece) {
-                pieces[i].piece = null;
+            if (removePieceID == pieces[i].id) {
+                Debug.Log("Removed from slot");
                 pieceSlots[pieces[i].slot] = false;
+                pieces[i].piece.destroyPiece();
+                pieces[i].piece = null;
                 debugSlots();
                 return;
             }
@@ -141,9 +154,15 @@ public class TetrisMachine : MonoBehaviour {
 
     protected void initialize() {
         currentPieces = 0;
+        id = 0;
         pieceSlots = new bool[maxPieces];
         conveyorBelt = new ConveyorBeltPiece[maxPieces];
         pieces = new PieceState[maxPieces];
+
+        for(int i = 0; i < maxPieces; i++) {
+            pieces[i] = new PieceState(null, Vector3.zero, -1, -1, 0f);
+        }
+
         deployConveyorBelt(maxPieces);
     }
 
@@ -152,6 +171,12 @@ public class TetrisMachine : MonoBehaviour {
             GameObject GOConveyor = Instantiate(conveyorBeltPiece, transform.position + transform.forward * (i * radius * 6 + radius * 9), transform.rotation);
             conveyorBelt[length - 1 - i] = GOConveyor.GetComponent<ConveyorBeltPiece>();
         }
+    }
+
+    protected int generateID() {
+        int tempID = id;
+        id++;
+        return tempID;
     }
 
     protected int[,,] selectRandomPiece() {
@@ -220,7 +245,7 @@ public class TetrisMachine : MonoBehaviour {
 
         for (int i = 0; i < maxPieces; i++)
         {
-            if (pieceSlots[i] != true && isClearAhead(i))
+            if (pieceSlots[i] == false && isClearAhead(i))
             {
                 return i;
             }
