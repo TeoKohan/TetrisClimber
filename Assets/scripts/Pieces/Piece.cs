@@ -94,6 +94,8 @@ public class Piece : MonoBehaviour
             }
         }
 
+        debugArray(pieceValues);
+
         blocks = new GameObject[blockAmount];
         for (int i = 0; i < transform.childCount; i++)
         {
@@ -120,39 +122,102 @@ public class Piece : MonoBehaviour
         }
     }
 
-    public void rotateX3x3()
+    private void rotateX3x3_45()
     {
-        Debug.Log("Rotate");
+        Debug.Log("Rotate X");
 
         bool store;
-        bool tempStore;
+
+        debugArray(pieceValues);
 
         for (int i = 0; i < 3; i++)
         {
-            store = pieceValues[i, 1, 0];
-            pieceValues[i, 1, 0] = pieceValues[i, 0, 0];
-            tempStore = pieceValues[i, 2, 0];
-            pieceValues[i, 2, 0] = store;
-            store = tempStore;
-            tempStore = pieceValues[i, 2, 1];
-            pieceValues[i, 2, 1] = store;
-            store = tempStore;
-            tempStore = pieceValues[i, 2, 2];
-            pieceValues[i, 2, 2] = store;
-            store = tempStore;
-            tempStore = pieceValues[i, 1, 2];
-            pieceValues[i, 1, 2] = store;
-            store = tempStore;
-            tempStore = pieceValues[i, 0, 2];
-            pieceValues[i, 0, 2] = store;
-            store = tempStore;
-            tempStore = pieceValues[i, 0, 1];
-            pieceValues[i, 0, 1] = store;
-            store = tempStore;
-            pieceValues[i, 0, 0] = store;
+            store = pieceValues[i, 0, 0];
+            pieceValues[i, 0, 0] = pieceValues[i, 0, 1];
+            pieceValues[i, 0, 1] = pieceValues[i, 0, 2];
+            pieceValues[i, 0, 2] = pieceValues[i, 1, 2];
+            pieceValues[i, 1, 2] = pieceValues[i, 2, 2];
+            pieceValues[i, 2, 2] = pieceValues[i, 2, 1];
+            pieceValues[i, 2, 1] = pieceValues[i, 2, 0];
+            pieceValues[i, 2, 0] = pieceValues[i, 1, 0];
+            pieceValues[i, 1, 0] = store;
         }
 
-        //relocateFalse();
+        debugArray(pieceValues);
+    }
+
+    private void rotateY3x3_45()
+    {
+        Debug.Log("Rotate Y");
+
+        bool store;
+
+        debugArray(pieceValues);
+
+        for (int i = 0; i < 3; i++)
+        {
+            store = pieceValues[0, i, 0];
+            pieceValues[0, i, 0] = pieceValues[0, i, 1];
+            pieceValues[0, i, 1] = pieceValues[0, i, 2];
+            pieceValues[0, i, 2] = pieceValues[1, i, 2];
+            pieceValues[1, i, 2] = pieceValues[2, i, 2];
+            pieceValues[2, i, 2] = pieceValues[2, i, 1];
+            pieceValues[2, i, 1] = pieceValues[2, i, 0];
+            pieceValues[2, i, 0] = pieceValues[1, i, 0];
+            pieceValues[1, i, 0] = store;
+        }
+
+        debugArray(pieceValues);
+    }
+
+    private void rotateZ3x3_45()
+    {
+        Debug.Log("Rotate Z");
+
+        bool store;
+
+        debugArray(pieceValues);
+
+        for (int i = 0; i < 3; i++)
+        {
+            store = pieceValues[0, 0, i];
+            pieceValues[0, 0, i] = pieceValues[1, 0, i];
+            pieceValues[1, 0, i] = pieceValues[2, 0, i];
+            pieceValues[2, 0, i] = pieceValues[2, 1, i];
+            pieceValues[2, 1, i] = pieceValues[2, 2, i];
+            pieceValues[2, 2, i] = pieceValues[1, 2, i];
+            pieceValues[1, 2, i] = pieceValues[0, 2, i];
+            pieceValues[0, 2, i] = pieceValues[0, 1, i];
+            pieceValues[0, 1, i] = store;
+        }
+
+        debugArray(pieceValues);
+    }
+
+    private void debugArray(bool[,,] a)
+    {
+        string dString = "";
+
+        int x = pieceSize.x;
+        int y = pieceSize.y;
+        int z = pieceSize.z;
+
+        for (int u = 0; u < x; u++)
+        {
+            for (int v = 0; v < y; v++)
+            {
+                for (int w = 0; w < z; w++)
+                {
+                    if (a[u,v,w] == true)
+                    {
+                        dString += "1 ";
+                    }
+                    else { dString += "0 "; }
+                }
+            }
+        }
+
+        Debug.Log(dString);
     }
 
     public void rotateY3x3()
@@ -165,46 +230,12 @@ public class Piece : MonoBehaviour
 
     }
 
-    protected void relocateFalse()
-    {
-
-        int x = pieceSize.x;
-        int y = pieceSize.y;
-        int z = pieceSize.z;
-
-        pieceValues = new bool[x, y, z];
-
-        //Vector3 offset = new Vector3(-1f, 1f, 1f);
-
-        int blockCount = 0;
-
-        for (int u = 0; u < x; u++)
-        {
-            for (int v = 0; v < y; v++)
-            {
-                for (int w = 0; w < z; w++)
-                {
-                    if (pieceValues[u, v, w] == true || pieceValues[u, v, w] == false)
-                    {
-                        //DEINVERT U BECAUSE PIVOT IS SHIFTED IN PICKUP
-                        blocks[blockCount].transform.position = transform.position + (new Vector3(u, v, w) * radius * 2) + new Vector3(1, 0.5f, -1) * radius * 2;
-                        blockCount++;
-                        if (blockCount >= blockAmount) { return; }
-                        //PASS DURATION TO BLOCK COMPONENT
-                    }
-                }
-            }
-        }
-    }
-
     protected void relocate()
     {
 
         int x = pieceSize.x;
         int y = pieceSize.y;
         int z = pieceSize.z;
-
-        pieceValues = new bool[x, y, z];
 
         //Vector3 offset = new Vector3(-1f, 1f, 1f);
 
@@ -268,14 +299,23 @@ public class Piece : MonoBehaviour
 
     public void RotateInX()
     {
+        rotateX3x3_45();
+        rotateX3x3_45();
+        relocate();
     }
 
     public void RotateInY()
     {
+        rotateY3x3_45();
+        rotateY3x3_45();
+        relocate();
     }
 
     public void RotateInZ()
     {
+        rotateZ3x3_45();
+        rotateZ3x3_45();
+        relocate();
     }
 
     public void validPlaceFound()
@@ -293,7 +333,7 @@ public class Piece : MonoBehaviour
         parentMachine.removePiece(id);
         relocate();
 
-        //InvokeRepeating("rotateX3x3", 0f, 0.5f);
+        InvokeRepeating("rotateX3x3_90", 0f, 0.5f);
     }
 
     public void placeOnTower()
