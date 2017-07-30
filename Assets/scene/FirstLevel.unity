@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.45095325, g: 0.5008295, b: 0.57443905, a: 1}
+  m_IndirectSpecularColor: {r: 0.4509536, g: 0.5008298, b: 0.57444036, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -217,6 +217,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98f161c24cec30f43902ac247fb64fff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  milestones: []
+  victoryGoal: {fileID: 0}
 --- !u!4 &365182999
 Transform:
   m_ObjectHideFlags: 0

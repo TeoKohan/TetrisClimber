@@ -52,4 +52,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   block: {fileID: 1082386715349054, guid: b3d3db22d9f13174b92f4f6560e20ab0, type: 2}
-  destructionTime: 10
+  maxHealth: 10

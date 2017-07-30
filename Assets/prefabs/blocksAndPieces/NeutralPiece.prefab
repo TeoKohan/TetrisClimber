@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4863180384041130}
   - component: {fileID: 114454614832426528}
   m_Layer: 8
-  m_Name: TrampolinePiece
+  m_Name: NeutralPiece
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,5 +51,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfb9492f5c818e94bb4b6d4f8e098219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  block: {fileID: 1082386715349054, guid: b3d3db22d9f13174b92f4f6560e20ab0, type: 2}
-  destructionTime: 10
+  block: {fileID: 1082386715349054, guid: 19ac256e881223945a015e720ea457f6, type: 2}
+  maxHealth: 10
