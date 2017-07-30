@@ -29,7 +29,7 @@ public class TowerController : MonoBehaviour {
     [SerializeField]
     private Transform floorGraphic;
     [SerializeField]
-    private int tickDuration;
+    private float tickDuration;
 
     void Awake()
     {
@@ -64,7 +64,7 @@ public class TowerController : MonoBehaviour {
             floorGraphic.localScale = new Vector3(xSize, floorGraphic.localScale.y, zSize);
 
             // Start ticking!
-            Invoke("Tick",tickDuration);
+            Invoke("NotifyTick",tickDuration);
         }
     }
 
@@ -78,7 +78,7 @@ public class TowerController : MonoBehaviour {
         {
             p.tick();
         }
-        Invoke("Tick", tickDuration);
+        Invoke("NotifyTick", tickDuration);
     }
 
 
@@ -89,24 +89,25 @@ public class TowerController : MonoBehaviour {
     // piece: the matrix for any given piece
     // position: the position within the tower that was clicked by the user
 
-    public bool CheckForPlace(bool[,,] piece, int[] position)
+    public bool CheckForPlace(Piece piece, int[] position)
     {
+        bool[,,] p = piece.getMatrix();
         // Exception logic: if the piece is too big, it shouldn't fit
-        if (piece.GetLength(0) + position[0] > floorSpaces.GetLength(0) ||
-            piece.GetLength(1) + position[1] > floorSpaces.GetLength(1) ||
-            piece.GetLength(2) + position[2] > floorSpaces.GetLength(2)) {
+        if (piece.getPieceSize().x + position[0] > floorSpaces.GetLength(0) ||
+            piece.getPieceSize().y + position[1] > floorSpaces.GetLength(1) ||
+            piece.getPieceSize().z + position[2] > floorSpaces.GetLength(2)) {
 
             return false;
         } else {
             //assuming the desired reference point in the piece is 0,0,0
-            for (var x = 0; x < xSize; x++)
+            for (var x = 0; x < xSize && x < piece.getPieceSize().x; x++)
             {
-                for (var y = 0; y < ySize; y++)
+                for (var y = 0; y < ySize && y < piece.getPieceSize().y; y++)
                 {
-                    for (var z = 0; z < zSize; z++)
+                    for (var z = 0; z < zSize && z < piece.getPieceSize().z; z++)
                     {
                         // if there's a cube in the piece AND there's a cube in the floor
-                        if (piece[x,y,z] && 
+                        if (p[x,y,z] && 
                             floorSpaces[position[0]+z, position[1]+y, position[2]+z] >= 0)
                         {
                             //break!
@@ -133,11 +134,11 @@ public class TowerController : MonoBehaviour {
     public Vector3 PlacePiece(Piece piece, int[] position)
     {
         //assuming the desired reference point in the piece is 0,0,0
-        for (var x = 0; x < xSize; x++)
+        for (var x = 0; x < xSize && x < piece.getPieceSize().x; x++)
         {
-            for (var y = 0; y < ySize; y++)
+            for (var y = 0; y < ySize && y < piece.getPieceSize().y; y++)
             {
-                for (var z = 0; z < zSize; z++)
+                for (var z = 0; z < zSize && z < piece.getPieceSize().z; z++)
                 {
                     // if there's a cube in the piece, set it in the matrix
                     if (piece.getMatrix()[x, y, z])
@@ -150,8 +151,7 @@ public class TowerController : MonoBehaviour {
 
         pieces.Add(piece);
 
-        Vector3 piecePosition = new Vector3(piece.getPieceSize().x / 2, piece.getPieceSize().y / 2, piece.getPieceSize().z / 2);
-        piecePosition += transform.position + new Vector3(position[0], position[1], position[2]);
+        Vector3 piecePosition = transform.position + new Vector3(position[0] - piece.getPieceSize().x / 2, position[1], position[2] - piece.getPieceSize().z / 2);
 
         return piecePosition;
     }

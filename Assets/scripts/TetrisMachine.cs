@@ -59,10 +59,12 @@ public class TetrisMachine : MonoBehaviour {
     }
 
     void Update() {
-        for (int i = 0; i < maxPieces; i++) {
-            if (pieces[i].piece != null && pieces[i].percentage < 1f) {
-                pieces[i].percentage += conveyorSpeed * Time.deltaTime;
-                pieces[i].piece.transform.position = Vector3.Lerp(pieces[i].origin, pieces[i].destination, Mathf.Clamp01(pieces[i].percentage / pieces[i].goal));
+        if (pieces != null) { 
+            for (int i = 0; i < maxPieces; i++) {
+                if (pieces[i].piece != null && pieces[i].percentage < 1f) {
+                    pieces[i].percentage += conveyorSpeed * Time.deltaTime;
+                    pieces[i].piece.transform.position = Vector3.Lerp(pieces[i].origin, pieces[i].destination, Mathf.Clamp01(pieces[i].percentage / pieces[i].goal));
+                }
             }
         }
     }
