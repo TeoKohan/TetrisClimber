@@ -16,6 +16,8 @@ public class PlayerMovement : MonoBehaviour {
     private float gravity;
     [SerializeField]
     private float jumpSpeed;
+    [SerializeField]
+    private float superJumpMultiplier = 1.5f;
 
 
     // Use this for initialization
@@ -32,7 +34,7 @@ public class PlayerMovement : MonoBehaviour {
         {
             if (Input.GetButton("Jump"))
             {
-                freeFallSpeed = jumpSpeed * (-1);
+                Jump();
             }
             else
             {
@@ -40,6 +42,13 @@ public class PlayerMovement : MonoBehaviour {
             }
         }
 
+        doMovement();
+
+
+    }
+
+    public void doMovement()
+    {
         // gestión de gravedad con CC sin RB
         freeFallSpeed += gravity * Time.deltaTime;
         Vector3 movement = freeFallSpeed * Vector3.down;
@@ -50,14 +59,24 @@ public class PlayerMovement : MonoBehaviour {
         movement += starfe * transform.right * Time.deltaTime;
 
         cc.Move(movement);
+    }
 
-        /* float rotationMovementX = Input.GetAxis("Horizontal") * rotationSpeed;
-        transform.Rotate(new Vector3(0, rotationMovementX * Time.deltaTime, 0)); */
+    public void Jump()
+    {
+        freeFallSpeed = -jumpSpeed;
+    }
 
-        /* float rotationMovementY = Input.GetAxis("Mouse Y") * rotationSpeed * (-1);
-        Camera.main.transform.Rotate(new Vector3(rotationMovementY * Time.deltaTime, 0, 0)); */
+    public void SpecialJump()
+    {
+        freeFallSpeed = -jumpSpeed * superJumpMultiplier;
+    }
 
 
+    public void Teleport()
+    {
+        //Preguntar por el portal mas alto de la torre
+        Vector3 highestPortal = Vector3.one;
+        transform.Translate(highestPortal);
     }
 
 }
