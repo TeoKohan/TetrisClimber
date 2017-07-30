@@ -36,7 +36,8 @@ public class Piece : MonoBehaviour {
 
 
     //VIRTUAL METHODS
-    public virtual void steppedOn() {
+    public virtual void steppedOn()
+    {
 
     }
 

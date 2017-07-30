@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OrangePower : Piece {
+public class NeutralPower : Piece {
 
-    //Despues de mergerar descomentar
-    //public override void steppedOn()
-    public void steppedOn()
+
+    public override void steppedOn()
     {
 
     }
