@@ -28,6 +28,8 @@ public class TowerController : MonoBehaviour {
     private int zSize;
     [SerializeField]
     private Transform floorGraphic;
+    [SerializeField]
+    private int tickDuration;
 
     void Awake()
     {
@@ -60,7 +62,23 @@ public class TowerController : MonoBehaviour {
             //and make the graphic base larger
             floorGraphic.localPosition = new Vector3(xSize / 2, floorGraphic.localPosition.y, zSize / 2);
             floorGraphic.localScale = new Vector3(xSize, floorGraphic.localScale.y, zSize);
+
+            // Start ticking!
+            Invoke("Tick",tickDuration);
         }
+    }
+
+
+
+    //TICK
+    //Notify pieces that they should move in time (?)
+    void NotifyTick()
+    {
+        foreach (Piece p in pieces)
+        {
+            p.tick();
+        }
+        Invoke("Tick", tickDuration);
     }
 
 
@@ -235,6 +253,18 @@ public class TowerController : MonoBehaviour {
         }
 
         return coordinates;
+    }
+
+
+
+    public void RemovePiece(int id)
+    {
+        pieces.Remove(pieces.Find(p => p.getID() == id));
+        List<int3> pieceCoordinates = CoordinatesOf<int>(floorSpaces, id);
+        foreach (int3 coord in pieceCoordinates)
+        {
+            floorSpaces[coord.x, coord.y,coord.z] = -1;
+        }
     }
 
 
