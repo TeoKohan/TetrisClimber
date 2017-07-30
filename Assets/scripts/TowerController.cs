@@ -91,23 +91,24 @@ public class TowerController : MonoBehaviour {
     public bool CheckForPlace(Piece piece, int[] position)
     {
         bool[,,] p = piece.getMatrix();
-        // Exception logic: if the piece is too big, it shouldn't fit
-        if (piece.getPieceSize().x + position[0] > floorSpaces.GetLength(0) ||
-            piece.getPieceSize().y + position[1] > floorSpaces.GetLength(1) ||
-            piece.getPieceSize().z + position[2] > floorSpaces.GetLength(2)) {
+        // Basic exception logic: if the piece is too big, it shouldn't fit
+        //to be replaced, gotta go through the piece's matrix
+        if (piece.getPieceSize().x + position[0] > xSize ||
+            piece.getPieceSize().y + position[1] > ySize ||
+            piece.getPieceSize().z + position[2] > zSize) {
 
             return false;
         } else {
             //assuming the desired reference point in the piece is 0,0,0
-            for (var x = 0; x < xSize && x < piece.getPieceSize().x; x++)
+            for (var x = 0; x < piece.getPieceSize().x; x++)
             {
-                for (var y = 0; y < ySize && y < piece.getPieceSize().y; y++)
+                for (var y = 0;  y < piece.getPieceSize().y; y++)
                 {
-                    for (var z = 0; z < zSize && z < piece.getPieceSize().z; z++)
+                    for (var z = 0; z < piece.getPieceSize().z; z++)
                     {
                         // if there's a cube in the piece AND there's a cube in the floor
                         if (p[x,y,z] && 
-                            floorSpaces[position[0]+z, position[1]+y, position[2]+z] >= 0)
+                            floorSpaces[position[0]+x, position[1]+y, position[2]+z] >= 0)
                         {
                             //break!
                             return false;
@@ -133,23 +134,23 @@ public class TowerController : MonoBehaviour {
     public Vector3 PlacePiece(Piece piece, int[] position)
     {
         //assuming the desired reference point in the piece is 0,0,0
-        for (var x = 0; x < xSize && x < piece.getPieceSize().x; x++)
+        for (var x = 0; x < piece.getPieceSize().x; x++)
         {
-            for (var y = 0; y < ySize && y < piece.getPieceSize().y; y++)
+            for (var y = 0;y < piece.getPieceSize().y ; y++)
             {
-                for (var z = 0; z < zSize && z < piece.getPieceSize().z; z++)
+                for (var z = 0;z < piece.getPieceSize().z; z++)
                 {
                     // if there's a cube in the piece, set it in the matrix
-                    if (piece.getMatrix()[x, y, z])
+                    if (piece.getMatrix()[x, y , z])
                     {
-                        floorSpaces[position[0] + z, position[1] + y, position[2] + z] = piece.getID() ;
+                        floorSpaces[position[0] + x, position[1] + y, position[2] + z] = piece.getID() ;
                     }
                 }
             }
         }
         pieces.Add(piece);
 
-        Vector3 piecePosition = transform.position + new Vector3(position[0] + piece.getPieceSize().x / 2, position[1], position[2] + piece.getPieceSize().z / 2);
+        Vector3 piecePosition = transform.position + new Vector3(position[0], position[1], position[2]);
 
         return piecePosition;
     }
