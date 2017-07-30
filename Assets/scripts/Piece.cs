@@ -33,6 +33,10 @@ public class Piece : MonoBehaviour {
     protected int timer;
     int3 pieceSize;
 
+    public virtual void steppedOn() {
+
+    }
+
     public void generate(int[,,] values, float radius) {
 
         int x = values.GetLength(0);
@@ -114,8 +118,6 @@ public class Piece : MonoBehaviour {
     }
 
     public void pickUp() {
-        //TODO MAKE OTHER STUFF
-        Debug.Log("Id to delete: " + id);
         parentMachine.removePiece(id);
     }
 

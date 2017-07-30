@@ -48,14 +48,14 @@ public class PieceHandling : MonoBehaviour {
 
         if (Physics.Raycast(ray, out hit, maxDistanceToInteract, pieceLayer))
         {
-            PickUpPiece(hit.collider.gameObject);
+            PickUpPiece(hit.collider.transform.parent);
         }
     }
 
 
     //PICK UP PIECE
     // Picks the piece and adds it to the holding spot
-    void PickUpPiece(GameObject piece)
+    void PickUpPiece(Transform piece)
     {
         Piece p = piece.GetComponent<Piece>();
         p.pickUp();
@@ -68,8 +68,10 @@ public class PieceHandling : MonoBehaviour {
     // Verifies if the player is clicking a valid spot for the piece
     void TryToPlacePiece()
     {
+
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Debug.DrawRay(ray.origin, ray.direction * 10, Color.red);
 
         if (Physics.Raycast(ray, out hit, maxDistanceToInteract, towerLayer))
         {
@@ -87,6 +89,8 @@ public class PieceHandling : MonoBehaviour {
             Mathf.FloorToInt(point.x),
             Mathf.FloorToInt(point.y),
             Mathf.FloorToInt(point.z)};
+
+        //ESTO TODAVIA NO ANDA, O ALGO PARECIDO
         if(TowerController.instance.CheckForPlace(p.getMatrix(), position))
         {
             Vector3 newPosition = TowerController.instance.PlacePiece(p, position);
