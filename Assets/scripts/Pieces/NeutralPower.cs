@@ -10,4 +10,14 @@ public class OrangePower : Piece {
     {
         player.GetComponent<PlayerMovement>().SpecialJump();
     }
+
+    public override void onPlace()
+    {
+
+    }
+
+    public override void onTowerUpdate()
+    {
+
+    }
 }
