@@ -28,9 +28,10 @@ public class TetrisMachine : MonoBehaviour {
         }
     }
 
-
     [SerializeField]
-    protected int maxPieces;
+    protected float pieceInterval = 2f;
+    [SerializeField]
+    protected int maxPieces = 3;
 
     [SerializeField]
     protected GameObject piece;
@@ -39,15 +40,13 @@ public class TetrisMachine : MonoBehaviour {
 
     [SerializeField]
     protected Transform spawnpoint;
-    [SerializeField]
-    protected TextAsset[] blocks;
 
-    [SerializeField]
-    protected float[] spawnrate;
+    //[SerializeField]
+    //protected float[] spawnrate;
     [SerializeField]
     protected float conveyorSpeed;
 
-
+    protected TextAsset[] blocks;
     protected int currentPieces;
     protected bool[] pieceSlots;
     protected ConveyorBeltPiece[] conveyorBelt;
@@ -56,7 +55,7 @@ public class TetrisMachine : MonoBehaviour {
 
     void Start() {
         initialize();
-        InvokeRepeating("generatePiece", 2f, 2f);
+        InvokeRepeating("generatePiece", pieceInterval, pieceInterval);
     }
 
     void Update() {
@@ -72,7 +71,7 @@ public class TetrisMachine : MonoBehaviour {
 
     //DEBUG
     private void generateDebugPiece() {
-        int randomPiece = getRandomPieceIndex();
+        int randomPiece = getRandomBlock();
         drawDebugPiece(parsePiece(randomPiece));
     }
 
@@ -106,7 +105,6 @@ public class TetrisMachine : MonoBehaviour {
            if (pieceSlots[i]) { debug += "1  ";}
            else { debug += "0  "; }
         }
-        Debug.Log(debug);
     }
 
     //PUBLIC
@@ -141,11 +139,8 @@ public class TetrisMachine : MonoBehaviour {
 
     public void removePiece(int removePieceID) {
         for (int i = 0; i < maxPieces; i++) {
-            Debug.Log("attempt: " + removePieceID + "   " + pieces[i].id);
             if (removePieceID == pieces[i].id) {
-                Debug.Log("Removed from slot");
                 pieceSlots[pieces[i].slot] = false;
-                pieces[i].piece.destroyPiece();
                 pieces[i].piece = null;
                 debugSlots();
                 removeCurrentPiece();
@@ -169,6 +164,12 @@ public class TetrisMachine : MonoBehaviour {
         }
 
         deployConveyorBelt(maxPieces);
+
+        Object[] tempBlocks = Resources.LoadAll("blocks");
+        blocks = new TextAsset[tempBlocks.Length];
+        for (int i = 0; i < tempBlocks.Length; i++) {
+            blocks[i] = tempBlocks[i] as TextAsset;
+        }
     }
 
     protected void deployConveyorBelt(int length) {
@@ -185,7 +186,7 @@ public class TetrisMachine : MonoBehaviour {
     }
 
     protected int[,,] selectRandomPiece() {
-        return parsePiece(getRandomPieceIndex());
+        return parsePiece(getRandomBlock());
     }
 
     /*
@@ -213,15 +214,9 @@ public class TetrisMachine : MonoBehaviour {
         }
     }
 
-    protected int getRandomPieceIndex() {
-        float randomValue = Random.Range(0f, 100f);
-
-        float percent = 0f;
-        for (int i = 0; i < blocks.Length; i++) {
-            percent += spawnrate[i];
-            if (randomValue <= percent) { return i; }
-        }
-        return 0;
+    protected int getRandomBlock() {
+        int randomValue = Random.Range(0, blocks.Length);
+        return randomValue;
     }
 
     protected int[,,] parsePiece(int index)
@@ -243,13 +238,12 @@ public class TetrisMachine : MonoBehaviour {
         int[,,] values = new int[x, y, z];
         for (int u = 0; u < x; u++)
         {
-            for (int v = 0; v < y; v++)
+            for (int w = 0; w < z; w++)
             {
-                for (int w = 0; w < z; w++)
+                for (int v = 0; v < y; v++)
                 {
-
-                    //INVERTING U, SWAPPING GLOBAL Y AND Z, LOCAL V AND W; 
-                    values[x - u - 1, w, v] = (int)char.GetNumericValue(fields[2][u + w * x + v * x * y]);
+                    //Debug.Log(values[u, v, w]);
+                    values[u, v, w] = (int)char.GetNumericValue(fields[2][u + w * x + v * x * z]);
                 }
             }
         }
@@ -317,15 +311,6 @@ public class TetrisMachine : MonoBehaviour {
     }
 
     //GETTERS & SETTERS
-    public float[] getSpawnRates()
-    {
-        return spawnrate;
-    }
-
-    public void setSpawnRates(float[] rates)
-    {
-        spawnrate = rates;
-    }
 
     public float getConveyorSpeed () {
         return conveyorSpeed;
