@@ -25,10 +25,11 @@ public class Piece : MonoBehaviour {
     protected TetrisMachine parentMachine;
     protected bool[,,] pieceValues;
     protected int id;
+    protected int blockAmount;
     protected int timer;
     int3 pieceSize;
 
-        public void generate(int[,,] values, float radius) {
+    public void generate(int[,,] values, float radius) {
 
         int x = values.GetLength(0);
         int y = values.GetLength(1);
@@ -38,6 +39,8 @@ public class Piece : MonoBehaviour {
         pieceValues = new bool[x, y, z];
 
         //Vector3 offset = new Vector3(-1f, 1f, 1f);
+
+        blockAmount = 0;
 
         for (int u = 0; u < x; u++)
         {
@@ -49,8 +52,9 @@ public class Piece : MonoBehaviour {
                     {
                         //INVERT U TO GO RIGHT TO LEFT
                         pieceValues[u, v, w] = true;
-                        GameObject GOBlock = Instantiate(block, transform.position + (new Vector3(-u, v, w) * radius * 2), Quaternion.identity);
+                        GameObject GOBlock = Instantiate(block, transform.position + (new Vector3(-u, v, w) * radius * 2) + new Vector3(1, 0.5f, -1) * radius * 2, Quaternion.identity);
                         GOBlock.transform.parent = this.transform;
+                        blockAmount++;
                         //PASS DURATION TO BLOCK COMPONENT
                     }
                     else { pieceValues[u, v, w] = false; }
@@ -60,7 +64,19 @@ public class Piece : MonoBehaviour {
     }
 
     public void initialize() {
-        Invoke("pickUp", Random.Range(1f, 10f));
+        //Invoke("pickUp", Random.Range(1f, 5f));
+    }
+
+    public void tick() {
+        timer--;
+        checkForTimeout();
+    }
+
+    public void checkForTimeout() {
+        if (timer <= 0) {
+            //Hook message of death to TowerController.instance.removePiece(id);
+            //Destroy/Destroy Animation
+        }
     }
 
     public void goDown() {
@@ -95,12 +111,32 @@ public class Piece : MonoBehaviour {
 
     public void pickUp() {
         //TODO MAKE OTHER STUFF
+        Debug.Log("Id to delete: " + id);
+        parentMachine.removePiece(id);
+    }
+
+    public void destroyPiece() {
         Destroy(gameObject);
+    }
+
+    public Vector3 getPosition()
+    {
+        return transform.position;
     }
 
     public int getID()
     {
         return id;
+    }
+
+    public void setID(int id)
+    {
+        this.id = id;
+    }
+
+    public int getBlockAmount()
+    {
+        return blockAmount;
     }
 
     public bool[,,] getMatrix() {

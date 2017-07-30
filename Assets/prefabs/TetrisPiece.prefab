@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4863180384041130}
   - component: {fileID: 114454614832426528}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TetrisPiece
   m_TagString: Untagged
   m_Icon: {fileID: 0}
