@@ -79,9 +79,11 @@ public class PieceHandling : MonoBehaviour {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(ray.origin, ray.direction * 10, Color.red);
 
-        if (Physics.Raycast(ray, out hit, maxDistanceToInteract, towerLayer))
+        if (Physics.Raycast(ray, out hit, maxDistanceToInteract))
         {
-            PlacePiece(TowerController.instance.transform.position - hit.point);
+            if (TowerController.instance.IsWithinTower(hit.point)) { 
+                PlacePiece(TowerController.instance.transform.position - hit.point);
+            }
         }
     }
 
@@ -112,11 +114,10 @@ public class PieceHandling : MonoBehaviour {
         GameObject piece = piecePivot.GetChild(0).gameObject;
         Piece p = piece.GetComponent<Piece>();
         RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Camera.main.transform.forward);
 
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit))
         {
-            if (hit.transform.gameObject.layer == towerLayer) { 
+            if (TowerController.instance.IsWithinTower(hit.point)) { 
                 int[] position = new int[] {
                     Mathf.FloorToInt(hit.point.x),
                     Mathf.FloorToInt(hit.point.y),

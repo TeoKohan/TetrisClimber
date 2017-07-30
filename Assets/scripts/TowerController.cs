@@ -54,11 +54,7 @@ public class TowerController : MonoBehaviour {
             }
             //and the list for all involved pieces
             pieces = new List<Piece>();
-
-            //we modify the boxcollider to pick up clicks in the tower
-            gameObject.GetComponent<BoxCollider>().center = new Vector3(xSize / 2, ySize/2, zSize/2);
-            gameObject.GetComponent<BoxCollider>().size = new Vector3(xSize, ySize, zSize);
-
+            
             //and make the graphic base larger
             floorGraphic.localPosition = new Vector3(xSize / 2, floorGraphic.localPosition.y, zSize / 2);
             floorGraphic.localScale = new Vector3(xSize, floorGraphic.localScale.y, zSize);
@@ -151,7 +147,7 @@ public class TowerController : MonoBehaviour {
 
         pieces.Add(piece);
 
-        Vector3 piecePosition = transform.position + new Vector3(position[0] - piece.getPieceSize().x / 2, position[1], position[2] - piece.getPieceSize().z / 2);
+        Vector3 piecePosition = transform.position + new Vector3(position[0] , position[1], position[2] );
 
         return piecePosition;
     }
@@ -257,6 +253,8 @@ public class TowerController : MonoBehaviour {
     }
 
 
+    //REMOVE PIECE
+    // Takes out a piece from the tower
 
     public void RemovePiece(int id)
     {
@@ -268,5 +266,18 @@ public class TowerController : MonoBehaviour {
         }
     }
 
+
+    //IS WITHIN TOWER
+    // Checks if a point is within the tower
+    public bool IsWithinTower(Vector3 point)
+    {
+        if (point.x > transform.position.x && point.x < transform.position.x + xSize &&
+            point.y > transform.position.y && point.y < transform.position.y + ySize &&
+            point.z > transform.position.z && point.z < transform.position.z + zSize)
+        {
+            return true;
+        }
+        return false;
+    }
 
 }
