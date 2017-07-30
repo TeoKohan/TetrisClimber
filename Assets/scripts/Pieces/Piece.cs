@@ -5,9 +5,6 @@ using UnityEngine;
 
 public class Piece : MonoBehaviour {
 
-    //To delete on managers creation
-    public GameObject player;
-
     public struct int3 {
         public int x, y, z;
 
@@ -20,13 +17,17 @@ public class Piece : MonoBehaviour {
     }
 
     [SerializeField]
-    GameObject block;
+    protected Material material;
+    [SerializeField]
+    protected GameObject block;
 
     //[SerializeField] GameObject property;
     [SerializeField]
     int destructionTime;
 
     protected TetrisMachine parentMachine;
+    protected PieceTypes pieceType;
+    protected bool onTower;
     protected bool[,,] pieceValues;
     protected int id;
     protected int blockAmount;
@@ -85,29 +86,28 @@ public class Piece : MonoBehaviour {
         }
     }
 
-    public void initialize() {
-        //Invoke("pickUp", Random.Range(1f, 5f));
+    public void initialize(PieceTypes pieceType) {
+        onTower = false;
+        this.pieceType = pieceType;
     }
 
     public void tick() {
-        timer--;
-        checkForTimeout();
+        if (onTower) {
+            timer--;
+            checkForTimeout();
+        }
     }
 
     public void checkForTimeout() {
         if (timer <= 0) {
-            //Hook message of death to TowerController.instance.removePiece(id);
-            //Destroy/Destroy Animation
+            TowerController.instance.RemovePiece(id);
+            Destroy(gameObject);
         }
     }
 
     public void goDown() {
         //here we execute de property just in case it's a magnet. --Pending--
         //Notify about the end of the animation
-    }
-
-    public void reduceTimer() {
-        timer--;
     }
 
     public int3 getPieceSize() {
@@ -133,6 +133,11 @@ public class Piece : MonoBehaviour {
 
     public void pickUp() {
         parentMachine.removePiece(id);
+    }
+
+    public void placeOnTower()
+    {
+        onTower = true;
     }
 
     public void destroyPiece() {

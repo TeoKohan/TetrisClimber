@@ -8,7 +8,7 @@ public class OrangePower : Piece {
     //public override void steppedOn()
     public void steppedOn()
     {
-        player.GetComponent<PlayerMovement>().SpecialJump();
+
     }
 
     public override void onPlace()

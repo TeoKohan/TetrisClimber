@@ -29,6 +29,8 @@ public class TetrisMachine : MonoBehaviour {
     }
 
     [SerializeField]
+    GameObject block;
+    [SerializeField]
     protected float pieceInterval = 2f;
     [SerializeField]
     protected int maxPieces = 3;
@@ -41,8 +43,10 @@ public class TetrisMachine : MonoBehaviour {
     [SerializeField]
     protected Transform spawnpoint;
 
-    //[SerializeField]
-    //protected float[] spawnrate;
+    [SerializeField]
+    protected Piece[] pieceTypes;
+    [SerializeField]
+    protected float[] spawnrate;
     [SerializeField]
     protected float conveyorSpeed;
 
