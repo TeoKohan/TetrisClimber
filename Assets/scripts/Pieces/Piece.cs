@@ -32,7 +32,7 @@ public class Piece : MonoBehaviour {
     protected bool[,,] pieceValues;
     protected int id;
     protected int health;
-    protected int nextHealthStep;
+    protected float nextHealthStep;
     protected int blockAmount;
     int3 pieceSize;
 
@@ -122,7 +122,7 @@ public class Piece : MonoBehaviour {
     }
 
     protected void setNextHealthStep() {
-        nextHealthStep = nextHealthStep - (int)((float)maxHealth / (float)healthSteps);
+        nextHealthStep = nextHealthStep - ((float)maxHealth / (float)healthSteps);
     }
 
     protected void checkForTimeout() {
