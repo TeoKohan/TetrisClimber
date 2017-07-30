@@ -201,7 +201,7 @@ GameObject:
   - component: {fileID: 470990593}
   - component: {fileID: 470990594}
   - component: {fileID: 470990595}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -255,6 +255,7 @@ MonoBehaviour:
   rotationSpeed: 120
   gravity: 1
   jumpSpeed: 0.3
+  superJumpMultiplier: 1.5
 --- !u!114 &470990595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,7 +288,7 @@ GameObject:
   - component: {fileID: 1073311896}
   - component: {fileID: 1073311895}
   - component: {fileID: 1073311900}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -496,6 +497,7 @@ MonoBehaviour:
   ySize: 100
   zSize: 6
   floorGraphic: {fileID: 59992882}
+  tickDuration: 0
 --- !u!4 &1799273636
 Transform:
   m_ObjectHideFlags: 0
@@ -530,7 +532,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1814450584}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Piece Handling Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}

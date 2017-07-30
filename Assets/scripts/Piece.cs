@@ -1,8 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityScript;
 using UnityEngine;
 
 public class Piece : MonoBehaviour {
+
+    //To delete on managers creation
+    public GameObject player;
 
     public struct int3 {
         public int x, y, z;
@@ -150,4 +154,5 @@ public class Piece : MonoBehaviour {
     public void setTetrisMachine(TetrisMachine tetrisMachine) {
         parentMachine = tetrisMachine;
     }
+
 }
