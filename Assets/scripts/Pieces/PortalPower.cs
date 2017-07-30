@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PurplePower : Piece {
+public class PortalPower : Piece {
 
     public override void steppedOn()
     {
-        player.GetComponent<PlayerMovement>().Teleport();
+        GameManager.instance.GetPlayer().GetComponent<PlayerMovement>().Teleport();
     }
 
     public override void onPlace()

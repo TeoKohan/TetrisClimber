@@ -6,7 +6,7 @@ public class TrampolinePower : Piece {
 
     public override void steppedOn()
     {
-        player.GetComponent<PlayerMovement>().SpecialJump();
+        GameManager.instance.GetPlayer().GetComponent<PlayerMovement>().SpecialJump();
     }
 
     public override void onPlace()
