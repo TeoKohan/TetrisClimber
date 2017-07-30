@@ -22,14 +22,14 @@ public class Piece : MonoBehaviour {
 
     //[SerializeField] GameObject property;
     [SerializeField]
-    int health;
+    int maxHealth;
 
     protected TetrisMachine parentMachine;
     protected bool onTower;
     protected bool[,,] pieceValues;
     protected int id;
+    protected int health;
     protected int blockAmount;
-    protected int timer;
     int3 pieceSize;
 
 
@@ -87,17 +87,26 @@ public class Piece : MonoBehaviour {
 
     public void initialize() {
         onTower = false;
+        health = maxHealth;
     }
 
     public void tick() {
         if (onTower) {
-            timer--;
+            health--;
+            updateDamage();
             checkForTimeout();
         }
     }
 
-    public void checkForTimeout() {
-        if (timer <= 0) {
+    protected void updateDamage()
+    {
+        
+        //foreach (gameObject.transform.ch)
+        //Renderer.material.SetFloat("_HealthPerc", health / maxHealth);
+    }
+
+    protected void checkForTimeout() {
+        if (health <= 0) {
             TowerController.instance.RemovePiece(id);
             Destroy(gameObject);
         }

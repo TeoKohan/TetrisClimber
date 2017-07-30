@@ -36,8 +36,9 @@ public class TowerController : MonoBehaviour {
         if (instance)
         {
             Destroy(gameObject);
-        } else
-        {
+        }
+
+        else {
             instance = this;
 
             //let's set up the slot matrix
@@ -71,12 +72,11 @@ public class TowerController : MonoBehaviour {
     void NotifyTick()
     {
         if (pieces.Count > 0) {
-            foreach (Piece p in pieces)
-            {
-                p.tick();
+            for (int i = 0; i < pieces.Count; i++) {
+                pieces[i].tick();
             }
-            Invoke("NotifyTick", tickDuration);
         }
+        Invoke("NotifyTick", tickDuration);
     }
 
 
