@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityScript;
 using UnityEngine;
 
-public class Piece : MonoBehaviour {
+public class Piece : MonoBehaviour
+{
 
     const int healthSteps = 5;
 
-    public struct int3 {
+    public struct int3
+    {
         public int x, y, z;
 
-        public int3(int x, int y, int z) {
+        public int3(int x, int y, int z)
+        {
             this.x = x;
             this.y = y;
             this.z = z;
@@ -32,7 +35,7 @@ public class Piece : MonoBehaviour {
     protected bool[,,] pieceValues;
     protected int id;
     protected int health;
-
+    protected float radius;
     protected float nextHealthStep;
     protected int blockAmount;
     int3 pieceSize;
@@ -55,7 +58,10 @@ public class Piece : MonoBehaviour {
     }
 
     //PUBLIC
-    public void generate(int[,,] values, float radius) {
+    public void generate(int[,,] values, float radius)
+    {
+
+        this.radius = radius;
 
         int x = values.GetLength(0);
         int y = values.GetLength(1);
@@ -96,73 +102,198 @@ public class Piece : MonoBehaviour {
         }
     }
 
-    public void initialize() {
+    public void initialize()
+    {
         onTower = false;
         health = maxHealth;
         nextHealthStep = maxHealth;
         setNextHealthStep();
     }
 
-    public void tick() {
-        if (onTower) {
+    public void tick()
+    {
+        if (onTower)
+        {
             health--;
             checkForTimeout();
             updateDamage();
         }
     }
 
+    public void rotateX3x3()
+    {
+        Debug.Log("Rotate");
+
+        bool store;
+        bool tempStore;
+
+        for (int i = 0; i < 3; i++)
+        {
+            store = pieceValues[i, 1, 0];
+            pieceValues[i, 1, 0] = pieceValues[i, 0, 0];
+            tempStore = pieceValues[i, 2, 0];
+            pieceValues[i, 2, 0] = store;
+            store = tempStore;
+            tempStore = pieceValues[i, 2, 1];
+            pieceValues[i, 2, 1] = store;
+            store = tempStore;
+            tempStore = pieceValues[i, 2, 2];
+            pieceValues[i, 2, 2] = store;
+            store = tempStore;
+            tempStore = pieceValues[i, 1, 2];
+            pieceValues[i, 1, 2] = store;
+            store = tempStore;
+            tempStore = pieceValues[i, 0, 2];
+            pieceValues[i, 0, 2] = store;
+            store = tempStore;
+            tempStore = pieceValues[i, 0, 1];
+            pieceValues[i, 0, 1] = store;
+            store = tempStore;
+            pieceValues[i, 0, 0] = store;
+        }
+
+        //relocateFalse();
+    }
+
+    public void rotateY3x3()
+    {
+
+    }
+
+    public void rotateZ3x3()
+    {
+
+    }
+
+    protected void relocateFalse()
+    {
+
+        int x = pieceSize.x;
+        int y = pieceSize.y;
+        int z = pieceSize.z;
+
+        pieceValues = new bool[x, y, z];
+
+        //Vector3 offset = new Vector3(-1f, 1f, 1f);
+
+        int blockCount = 0;
+
+        for (int u = 0; u < x; u++)
+        {
+            for (int v = 0; v < y; v++)
+            {
+                for (int w = 0; w < z; w++)
+                {
+                    if (pieceValues[u, v, w] == true || pieceValues[u, v, w] == false)
+                    {
+                        //DEINVERT U BECAUSE PIVOT IS SHIFTED IN PICKUP
+                        blocks[blockCount].transform.position = transform.position + (new Vector3(u, v, w) * radius * 2) + new Vector3(1, 0.5f, -1) * radius * 2;
+                        blockCount++;
+                        if (blockCount >= blockAmount) { return; }
+                        //PASS DURATION TO BLOCK COMPONENT
+                    }
+                }
+            }
+        }
+    }
+
+    protected void relocate()
+    {
+
+        int x = pieceSize.x;
+        int y = pieceSize.y;
+        int z = pieceSize.z;
+
+        pieceValues = new bool[x, y, z];
+
+        //Vector3 offset = new Vector3(-1f, 1f, 1f);
+
+        int blockCount = 0;
+
+        for (int u = 0; u < x; u++)
+        {
+            for (int v = 0; v < y; v++)
+            {
+                for (int w = 0; w < z; w++)
+                {
+                    if (pieceValues[u, v, w] == true)
+                    {
+                        //DEINVERT U BECAUSE PIVOT IS SHIFTED IN PICKUP
+                        blocks[blockCount].transform.position = transform.position + (new Vector3(u, v, w) * radius * 2) + new Vector3(1, 0.5f, -1) * radius * 2;
+                        blockCount++;
+                        //PASS DURATION TO BLOCK COMPONENT
+                    }
+                }
+            }
+        }
+    }
+
     protected void updateDamage()
     {
         float currentHealth = (float)health / (float)maxHealth;
-        if (currentHealth <= nextHealthStep) {
+        if (currentHealth <= nextHealthStep)
+        {
             setNextHealthStep();
-            foreach (GameObject G in blocks) {
+            foreach (GameObject G in blocks)
+            {
                 G.GetComponent<Renderer>().material.SetFloat("_HealthPerc", currentHealth);
             }
         }
     }
 
-    protected void setNextHealthStep() {
+    protected void setNextHealthStep()
+    {
         nextHealthStep = nextHealthStep - ((float)maxHealth / (float)healthSteps);
     }
 
-    protected void checkForTimeout() {
-        if (health <= 0) {
+    protected void checkForTimeout()
+    {
+        if (health <= 0)
+        {
             TowerController.instance.RemovePiece(id);
-            Debug.Log(maxHealth + "  " + health);
             Destroy(transform.gameObject);
-            Debug.Break();
         }
     }
 
-    public void goDown() {
+    public void goDown()
+    {
         //here we execute de property just in case it's a magnet. --Pending--
         //Notify about the end of the animation
     }
 
-    public int3 getPieceSize() {
+    public int3 getPieceSize()
+    {
         return pieceSize;
     }
 
-    public void RotateInX() {
+    public void RotateInX()
+    {
     }
 
-    public void RotateInY() {
+    public void RotateInY()
+    {
     }
 
-    public void RotateInZ() {
+    public void RotateInZ()
+    {
     }
 
-    public void validPlaceFound() {
+    public void validPlaceFound()
+    {
 
     }
 
-    public void validPlaceNotFound() {
+    public void validPlaceNotFound()
+    {
 
     }
 
-    public void pickUp() {
+    public void pickUp()
+    {
         parentMachine.removePiece(id);
+        relocate();
+
+        //InvokeRepeating("rotateX3x3", 0f, 0.5f);
     }
 
     public void placeOnTower()
@@ -191,15 +322,18 @@ public class Piece : MonoBehaviour {
         return blockAmount;
     }
 
-    public bool[,,] getMatrix() {
+    public bool[,,] getMatrix()
+    {
         return pieceValues;
     }
 
-    public TetrisMachine getTetrisMachine() {
+    public TetrisMachine getTetrisMachine()
+    {
         return parentMachine;
     }
 
-    public void setTetrisMachine(TetrisMachine tetrisMachine) {
+    public void setTetrisMachine(TetrisMachine tetrisMachine)
+    {
         parentMachine = tetrisMachine;
     }
 
