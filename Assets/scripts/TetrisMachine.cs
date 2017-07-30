@@ -116,7 +116,6 @@ public class TetrisMachine : MonoBehaviour {
         if (pieceSlots[maxPieces-1] == false) {
             addCurrentPiece();
             int slot = getPieceSlot();
-            Debug.Log("Piece Slot " + slot );
             pieceSlots[slot] = true;
             GameObject GOPiece = Instantiate(piece, spawnpoint.position, Quaternion.identity);
             Piece pieceScript = GOPiece.GetComponent<Piece>();
@@ -124,11 +123,13 @@ public class TetrisMachine : MonoBehaviour {
             pieceScript.generate(selectRandomPiece(), radius);
             pieceScript.setID(generateID());
             pieceScript.initialize();
-            PieceState P = new PieceState(pieceScript, getPieceDestination(slot), pieceScript.getID(),  slot, 1f - ((1f / maxPieces) * (slot - 1)));
+            PieceState P = new PieceState(pieceScript, getPieceDestination(slot), pieceScript.getID(),  slot, 1f - ((1f / maxPieces) * (slot)));
 
             for (int i = 0; i < maxPieces; i++) {
                 if (pieces[i].piece == null) {
                     pieces[i] = P;
+                    //IMPORTANT
+                    break;
                 }
             }
             
@@ -138,6 +139,7 @@ public class TetrisMachine : MonoBehaviour {
 
     public void removePiece(int removePieceID) {
         for (int i = 0; i < maxPieces; i++) {
+            Debug.Log("attempt: " + removePieceID + "   " + pieces[i].id);
             if (removePieceID == pieces[i].id) {
                 Debug.Log("Removed from slot");
                 pieceSlots[pieces[i].slot] = false;

@@ -52,7 +52,7 @@ public class Piece : MonoBehaviour {
                     {
                         //INVERT U TO GO RIGHT TO LEFT
                         pieceValues[u, v, w] = true;
-                        GameObject GOBlock = Instantiate(block, transform.position + (new Vector3(-u, v, w) * radius * 2), Quaternion.identity);
+                        GameObject GOBlock = Instantiate(block, transform.position + (new Vector3(-u, v, w) * radius * 2) + new Vector3(1, 0.5f, -1) * radius * 2, Quaternion.identity);
                         GOBlock.transform.parent = this.transform;
                         blockAmount++;
                         //PASS DURATION TO BLOCK COMPONENT
@@ -99,8 +99,8 @@ public class Piece : MonoBehaviour {
 
     public void pickUp() {
         //TODO MAKE OTHER STUFF
+        Debug.Log("Id to delete: " + id);
         parentMachine.removePiece(id);
-        Debug.Log("Id to delte: " + id);
     }
 
     public void destroyPiece() {
