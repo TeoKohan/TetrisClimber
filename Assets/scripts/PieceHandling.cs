@@ -67,6 +67,13 @@ public class PieceHandling : MonoBehaviour {
         p.pickUp();
         piece.transform.SetParent(piecePivot);
         piece.transform.localPosition = new Vector3(0,0,0);
+
+        
+        for (var i = 0; i < piece.childCount; i++ )
+        {
+            Transform block = piece.GetChild(i);
+            block.position -= new Vector3((float)1.5, 0, (float)1.5);
+        }
     }
 
 
@@ -103,6 +110,7 @@ public class PieceHandling : MonoBehaviour {
         {
             piece.transform.position = TowerController.instance.PlacePiece(p, position);
             piece.transform.parent = TowerController.instance.transform;
+            p.placeOnTower();
         } 
     }
 
@@ -134,9 +142,9 @@ public class PieceHandling : MonoBehaviour {
             }
 
             piece.transform.position = new Vector3(
-                Mathf.Floor(hit.point.x) - p.getPieceSize().x/2, 
+                Mathf.Floor(hit.point.x), 
                 Mathf.Floor(hit.point.y), 
-                Mathf.Floor(hit.point.z) - p.getPieceSize().z / 2);
+                Mathf.Floor(hit.point.z));
 
             piece.transform.rotation = Quaternion.Euler(new Vector3(
                 piece.transform.rotation.eulerAngles.x,
