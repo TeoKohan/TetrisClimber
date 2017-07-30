@@ -217,7 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98f161c24cec30f43902ac247fb64fff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 470990592}
   milestones: []
   victoryGoal: {fileID: 0}
 --- !u!4 &365182999
