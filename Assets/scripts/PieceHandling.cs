@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PieceHandling : MonoBehaviour {
 
@@ -48,14 +49,19 @@ public class PieceHandling : MonoBehaviour {
 
         if (Physics.Raycast(ray, out hit, maxDistanceToInteract, pieceLayer))
         {
-            PickUpPiece(hit.collider.gameObject);
+            if (hit.transform.parent.parent == null) {
+                PickUpPiece(hit.transform.parent);
+            } else if (hit.transform.parent.parent.gameObject.layer != towerLayer)
+            {
+                PickUpPiece(hit.transform.parent);
+            }
         }
     }
 
 
     //PICK UP PIECE
     // Picks the piece and adds it to the holding spot
-    void PickUpPiece(GameObject piece)
+    void PickUpPiece(Transform piece)
     {
         Piece p = piece.GetComponent<Piece>();
         p.pickUp();
@@ -68,12 +74,16 @@ public class PieceHandling : MonoBehaviour {
     // Verifies if the player is clicking a valid spot for the piece
     void TryToPlacePiece()
     {
+
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Debug.DrawRay(ray.origin, ray.direction * 10, Color.red);
 
-        if (Physics.Raycast(ray, out hit, maxDistanceToInteract, towerLayer))
+        if (Physics.Raycast(ray, out hit, maxDistanceToInteract))
         {
-            PlacePiece(hit.point);
+            if (TowerController.instance.IsWithinTower(hit.point)) { 
+                PlacePiece(TowerController.instance.transform.position - hit.point);
+            }
         }
     }
 
@@ -84,14 +94,15 @@ public class PieceHandling : MonoBehaviour {
         GameObject piece = piecePivot.GetChild(0).gameObject;
         Piece p = piece.GetComponent<Piece>();
         int[] position = new int[] {
-            Mathf.FloorToInt(point.x),
-            Mathf.FloorToInt(point.y),
-            Mathf.FloorToInt(point.z)};
-        if(TowerController.instance.CheckForPlace(p.getMatrix(), position))
+            Mathf.FloorToInt(Mathf.Abs(point.x)),
+            Mathf.FloorToInt(Mathf.Abs(point.y)),
+            Mathf.FloorToInt(Mathf.Abs(point.z))
+        };
+        
+        if(TowerController.instance.CheckForPlace(p, position))
         {
-            Vector3 newPosition = TowerController.instance.PlacePiece(p, position);
+            piece.transform.position = TowerController.instance.PlacePiece(p, position);
             piece.transform.parent = TowerController.instance.transform;
-            piece.transform.position = newPosition;
         } 
     }
 
@@ -103,21 +114,34 @@ public class PieceHandling : MonoBehaviour {
         GameObject piece = piecePivot.GetChild(0).gameObject;
         Piece p = piece.GetComponent<Piece>();
         RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Camera.main.transform.forward);
 
-        if (Physics.Raycast(ray, out hit, maxDistanceToInteract, towerLayer))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit))
         {
-            int[] position = new int[] {
-            Mathf.FloorToInt(hit.point.x),
-            Mathf.FloorToInt(hit.point.y),
-            Mathf.FloorToInt(hit.point.z)};
-            if (TowerController.instance.CheckForPlace(p.getMatrix(), position))
-            {
-                p.validPlaceFound();
-            } else
-            {
-                p.validPlaceNotFound();
+            if (TowerController.instance.IsWithinTower(hit.point)) { 
+                int[] position = new int[] {
+                    Mathf.FloorToInt(hit.point.x),
+                    Mathf.FloorToInt(hit.point.y),
+                    Mathf.FloorToInt(hit.point.z)
+                };
+           
+                if (TowerController.instance.CheckForPlace(p, position) && hit.distance <= maxDistanceToInteract)
+                {
+                    p.validPlaceFound();
+                } else
+                {
+                    p.validPlaceNotFound();
+                }
             }
+
+            piece.transform.position = new Vector3(
+                Mathf.Floor(hit.point.x) - p.getPieceSize().x/2, 
+                Mathf.Floor(hit.point.y), 
+                Mathf.Floor(hit.point.z) - p.getPieceSize().z / 2);
+
+            piece.transform.rotation = Quaternion.Euler(new Vector3(
+                piece.transform.rotation.eulerAngles.x,
+                Mathf.Round(piece.transform.rotation.eulerAngles.y / 90) * 90,
+                piece.transform.rotation.eulerAngles.z));
         }
     }
 
