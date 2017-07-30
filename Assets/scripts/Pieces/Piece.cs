@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class Piece : MonoBehaviour {
 
-    //To delete on managers creation
-    public GameObject player;
+    const int healthSteps = 5;
 
     public struct int3 {
         public int x, y, z;
@@ -18,25 +17,43 @@ public class Piece : MonoBehaviour {
         }
 
     }
-
     [SerializeField]
-    GameObject block;
+    protected PieceTypes pieceType;
+    [SerializeField]
+    protected GameObject block;
 
     //[SerializeField] GameObject property;
     [SerializeField]
-    int destructionTime;
+    int maxHealth;
 
     protected TetrisMachine parentMachine;
+    protected GameObject[] blocks;
+    protected bool onTower;
     protected bool[,,] pieceValues;
     protected int id;
+    protected int health;
+    protected float nextHealthStep;
     protected int blockAmount;
-    protected int timer;
     int3 pieceSize;
 
-    public virtual void steppedOn() {
+
+    //VIRTUAL METHODS
+    public virtual void steppedOn()
+    {
 
     }
 
+    public virtual void onPlace()
+    {
+
+    }
+
+    public virtual void onTowerUpdate()
+    {
+
+    }
+
+    //PUBLIC
     public void generate(int[,,] values, float radius) {
 
         int x = values.GetLength(0);
@@ -69,31 +86,57 @@ public class Piece : MonoBehaviour {
                 }
             }
         }
+
+        blocks = new GameObject[blockAmount];
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            GameObject block = transform.GetChild(i).gameObject;
+            blocks[i] = block;
+        }
     }
 
     public void initialize() {
-        //Invoke("pickUp", Random.Range(1f, 5f));
+        onTower = false;
+        health = maxHealth;
+        nextHealthStep = maxHealth;
+        setNextHealthStep();
     }
 
     public void tick() {
-        timer--;
-        checkForTimeout();
+        if (onTower) {
+            health--;
+            checkForTimeout();
+            updateDamage();
+        }
     }
 
-    public void checkForTimeout() {
-        if (timer <= 0) {
-            //Hook message of death to TowerController.instance.removePiece(id);
-            //Destroy/Destroy Animation
+    protected void updateDamage()
+    {
+        float currentHealth = (float)health / (float)maxHealth;
+        if (currentHealth <= nextHealthStep) {
+            setNextHealthStep();
+            foreach (GameObject G in blocks) {
+                G.GetComponent<Renderer>().material.SetFloat("_HealthPerc", currentHealth);
+            }
+        }
+    }
+
+    protected void setNextHealthStep() {
+        nextHealthStep = nextHealthStep - ((float)maxHealth / (float)healthSteps);
+    }
+
+    protected void checkForTimeout() {
+        if (health <= 0) {
+            TowerController.instance.RemovePiece(id);
+            Debug.Log(maxHealth + "  " + health);
+            Destroy(transform.gameObject);
+            Debug.Break();
         }
     }
 
     public void goDown() {
         //here we execute de property just in case it's a magnet. --Pending--
         //Notify about the end of the animation
-    }
-
-    public void reduceTimer() {
-        timer--;
     }
 
     public int3 getPieceSize() {
@@ -121,8 +164,10 @@ public class Piece : MonoBehaviour {
         parentMachine.removePiece(id);
     }
 
-    public void destroyPiece() {
-        Destroy(gameObject);
+    public void placeOnTower()
+    {
+        float currentHealth = health / maxHealth;
+        onTower = true;
     }
 
     public Vector3 getPosition()

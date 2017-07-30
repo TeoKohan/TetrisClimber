@@ -29,20 +29,22 @@ public class TetrisMachine : MonoBehaviour {
     }
 
     [SerializeField]
+    GameObject block;
+    [SerializeField]
     protected float pieceInterval = 2f;
     [SerializeField]
     protected int maxPieces = 3;
 
-    [SerializeField]
-    protected GameObject piece;
     [SerializeField]
     protected GameObject conveyorBeltPiece;
 
     [SerializeField]
     protected Transform spawnpoint;
 
-    //[SerializeField]
-    //protected float[] spawnrate;
+    [SerializeField]
+    protected GameObject[] pieceTypes;
+    [SerializeField]
+    protected float[] spawnrate;
     [SerializeField]
     protected float conveyorSpeed;
 
@@ -119,7 +121,7 @@ public class TetrisMachine : MonoBehaviour {
             addCurrentPiece();
             int slot = getPieceSlot();
             pieceSlots[slot] = true;
-            GameObject GOPiece = Instantiate(piece, spawnpoint.position, Quaternion.identity);
+            GameObject GOPiece = Instantiate(pieceTypes[getRandomBlockType()], spawnpoint.position, Quaternion.identity);
             Piece pieceScript = GOPiece.GetComponent<Piece>();
             pieceScript.setTetrisMachine(this);
             pieceScript.generate(selectRandomPiece(), radius);
@@ -219,6 +221,26 @@ public class TetrisMachine : MonoBehaviour {
     protected int getRandomBlock() {
         int randomValue = Random.Range(0, blocks.Length);
         return randomValue;
+    }
+
+    protected int getRandomBlockType() {
+        float totalPercentage = 0f;
+        float[] newPercentages = new float[spawnrate.Length];
+        for (int i = 0; i < spawnrate.Length; i++) {
+            totalPercentage += spawnrate[i];
+            newPercentages[i] = totalPercentage;
+        }
+
+        float random = Random.Range(0f, totalPercentage);
+
+        for (int i = 0; i < spawnrate.Length; i++)
+        {
+            if (random < newPercentages[i]) {
+                return i;
+            }
+        }
+
+        return 0;
     }
 
     protected int[,,] parsePiece(int index)
