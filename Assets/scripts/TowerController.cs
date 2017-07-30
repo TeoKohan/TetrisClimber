@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TowerController : MonoBehaviour {
@@ -319,6 +320,45 @@ public class TowerController : MonoBehaviour {
         }
 
         return neighbours;
+    }
+
+
+
+
+    public Vector3 GetHighestBlockOfType(System.Type T)
+    {
+        Vector3 highestBlock = Vector3.zero;
+        for (int x = 0; x < xSize; ++x)
+        {
+            for (int y = ySize; y <= 0; --y)
+            {
+                for (int z = 0; z < zSize; ++z)
+                {
+                    Piece piece = pieces.Find(p => p.getID() == floorSpaces[x, y, z]);
+                    if (piece.GetType() == T)
+                    {
+                        List<int3> coordinates = CoordinatesOf<int>(floorSpaces, piece.getID());
+                        coordinates = coordinates.OrderByDescending(c => c.y).ToList();
+
+                        foreach (int3 coord in coordinates)
+                        {
+                            if (floorSpaces[coord.x, coord.y +1, coord.z] == -1 &&
+                                floorSpaces[coord.x, coord.y + 2, coord.z] == -1)
+                            {
+                                highestBlock = transform.position + new Vector3(x + 1 / 2, y, z + 1/2);
+
+                                z = zSize;
+                                y = -1;
+                                x = xSize;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return highestBlock;
     }
 
 
