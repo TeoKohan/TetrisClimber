@@ -294,12 +294,18 @@ public class TowerController : MonoBehaviour {
         foreach (int3 coord in pieceCoordinates)
         {
             //check out its neighbours
-            for (var x = coord.x - 1; x <= coord.x + 1; x++)
+            for (var x = coord.x - 1; x <= coord.x + 1 && x < xSize; x++)
             {
-                for (var y = coord.y - 1; y<= coord.y + 1; y++)
+                if (x < 0)
+                    x = 0;
+                for (var y = coord.y - 1; y <= coord.y + 1 && y < ySize; y++)
                 {
-                    for (var z = coord.z - 1; z <= coord.z + 1; x++)
+                    if (y < 0)
+                        y = 0;
+                    for (var z = coord.z - 1; z <= coord.z + 1 && z < zSize; x++)
                     {
+                        if (z < 0)
+                            z = 0;
                         //if they're not part of our piece and we haven't found them before, add them to the list
                         if (floorSpaces[x,y,z] != id && 
                             neighbours.FindAll(p =>p.getID() == floorSpaces[x, y, z]).Count == 0)
