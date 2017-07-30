@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class PurplePower : Piece {
 
-    //Despues de mergerar descomentar
-    //public override void steppedOn()
-    public void steppedOn()
+    public override void steppedOn()
     {
         player.GetComponent<PlayerMovement>().Teleport();
     }
 
+    public override void onPlace()
+    {
+
+    }
+
+    public override void onTowerUpdate()
+    {
+
+    }
 }

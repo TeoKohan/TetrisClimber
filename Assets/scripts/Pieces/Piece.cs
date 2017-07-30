@@ -33,10 +33,24 @@ public class Piece : MonoBehaviour {
     protected int timer;
     int3 pieceSize;
 
+
+    //VIRTUAL METHODS
     public virtual void steppedOn() {
 
     }
 
+    public virtual void onPlace()
+    {
+
+    }
+
+    public virtual void onTowerUpdate()
+    {
+
+    }
+
+
+    //PUBLIC
     public void generate(int[,,] values, float radius) {
 
         int x = values.GetLength(0);
