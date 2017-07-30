@@ -32,6 +32,7 @@ public class Piece : MonoBehaviour {
     protected bool[,,] pieceValues;
     protected int id;
     protected int health;
+    protected float radius;
     protected float nextHealthStep;
     protected int blockAmount;
     int3 pieceSize;
@@ -55,6 +56,8 @@ public class Piece : MonoBehaviour {
 
     //PUBLIC
     public void generate(int[,,] values, float radius) {
+
+        this.radius = radius;
 
         int x = values.GetLength(0);
         int y = values.GetLength(1);
@@ -110,6 +113,110 @@ public class Piece : MonoBehaviour {
         }
     }
 
+    public void rotateX3x3() {
+        Debug.Log("Rotate");
+
+        bool store;
+        bool tempStore;
+
+        for (int i = 0; i < 3; i++) {
+            store = pieceValues[i, 1, 0];
+            pieceValues[i, 1, 0] = pieceValues[i, 0, 0];
+            tempStore = pieceValues[i, 2, 0];
+            pieceValues[i, 2, 0] = store;
+            store = tempStore;
+            tempStore = pieceValues[i, 2, 1];
+            pieceValues[i, 2, 1] = store;
+            store = tempStore;
+            tempStore = pieceValues[i, 2, 2];
+            pieceValues[i, 2, 2] = store;
+            store = tempStore;
+            tempStore = pieceValues[i, 1, 2];
+            pieceValues[i, 1, 2] = store;
+            store = tempStore;
+            tempStore = pieceValues[i, 0, 2];
+            pieceValues[i, 0, 2] = store;
+            store = tempStore;
+            tempStore = pieceValues[i, 0, 1];
+            pieceValues[i, 0, 1] = store;
+            store = tempStore;
+            pieceValues[i, 0, 0] = store;
+        }
+
+        //relocateFalse();
+    }
+
+    public void rotateY3x3() {
+
+    }
+
+    public void rotateZ3x3() {
+
+    }
+
+    protected void relocateFalse()
+    {
+
+        int x = pieceSize.x;
+        int y = pieceSize.y;
+        int z = pieceSize.z;
+
+        pieceValues = new bool[x, y, z];
+
+        //Vector3 offset = new Vector3(-1f, 1f, 1f);
+
+        int blockCount = 0;
+
+        for (int u = 0; u < x; u++)
+        {
+            for (int v = 0; v < y; v++)
+            {
+                for (int w = 0; w < z; w++)
+                {
+                    if (pieceValues[u, v, w] == true || pieceValues[u, v, w] == false)
+                    {
+                        //DEINVERT U BECAUSE PIVOT IS SHIFTED IN PICKUP
+                        blocks[blockCount].transform.position = transform.position + (new Vector3(u, v, w) * radius * 2) + new Vector3(1, 0.5f, -1) * radius * 2;
+                        blockCount++;
+                        if (blockCount >= blockAmount) { return; }
+                        //PASS DURATION TO BLOCK COMPONENT
+                    }
+                }
+            }
+        }
+    }
+
+    protected void relocate()
+    {
+
+        int x = pieceSize.x;
+        int y = pieceSize.y;
+        int z = pieceSize.z;
+
+        pieceValues = new bool[x, y, z];
+
+        //Vector3 offset = new Vector3(-1f, 1f, 1f);
+
+        int blockCount = 0;
+
+        for (int u = 0; u < x; u++)
+        {
+            for (int v = 0; v < y; v++)
+            {
+                for (int w = 0; w < z; w++)
+                {
+                    if (pieceValues[u, v, w] == true)
+                    {
+                        //DEINVERT U BECAUSE PIVOT IS SHIFTED IN PICKUP
+                        blocks[blockCount].transform.position = transform.position + (new Vector3(u, v, w) * radius * 2) + new Vector3(1, 0.5f, -1) * radius * 2;
+                        blockCount++;
+                        //PASS DURATION TO BLOCK COMPONENT
+                    }
+                }
+            }
+        }
+    }
+
     protected void updateDamage()
     {
         float currentHealth = (float)health / (float)maxHealth;
@@ -128,9 +235,7 @@ public class Piece : MonoBehaviour {
     protected void checkForTimeout() {
         if (health <= 0) {
             TowerController.instance.RemovePiece(id);
-            Debug.Log(maxHealth + "  " + health);
             Destroy(transform.gameObject);
-            Debug.Break();
         }
     }
 
@@ -162,6 +267,9 @@ public class Piece : MonoBehaviour {
 
     public void pickUp() {
         parentMachine.removePiece(id);
+        relocate();
+
+        //InvokeRepeating("rotateX3x3", 0f, 0.5f);
     }
 
     public void placeOnTower()
