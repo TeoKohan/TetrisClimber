@@ -1,8 +1,8 @@
 ﻿Shader "Custom/Glitter" {
 	Properties {
-		_Color ("Color", Color) = (1,1,1,1)
 		_HealthPerc ("Health Percentage", Range(0.0,1.0)) = 1.0
 		_CrackTex ("Albedo (RGB)", 2D) = "white" {}
+		_Color ("Color", Color) = (1,1,1,1)
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
 		_RimColor ("Rim Color", Color) = (0.26,0.19,0.16,0.0)
@@ -42,14 +42,16 @@
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			// Albedo comes from a texture tinted by color
-			o.Albedo = _Color.rgb;
+			fixed4 c = tex2D (_CrackTex, IN.uv_MainTex) * _Color;
+
+			o.Albedo = _Color.rgb - c.a * (1 - _HealthPerc);
 			// Metallic and smoothness come from slider variables
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
 			o.Alpha = _Color.a;
 
 			half rim = 1.0 - saturate(dot (normalize(IN.viewDir), o.Normal));
-            o.Emission = _RimColor.rgb * pow (rim, _RimPower) + (sin(_Time[1] * 4) + 1) / 8;
+            o.Emission = _RimColor.rgb * pow (rim, _RimPower) + (sin(_Time[1] * 4) + 1) / 8 - c.a * (1 - _HealthPerc);
 		}
 		ENDCG
 	}
