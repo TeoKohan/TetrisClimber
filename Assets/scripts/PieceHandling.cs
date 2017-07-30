@@ -76,7 +76,7 @@ public class PieceHandling : MonoBehaviour {
         for (var i = 0; i < piece.childCount; i++ )
         {
             Transform block = piece.GetChild(i);
-            block.position -= new Vector3((float)1.5, 0, (float)1.5);
+            block.position += new Vector3((float)1.5, 0, (float)1.5);
         }
     }
 
@@ -91,6 +91,11 @@ public class PieceHandling : MonoBehaviour {
 
         if (Physics.Raycast(ray, out hit, maxDistanceToInteract))
         {
+            int[] position = new int[] {
+                        Mathf.FloorToInt(hit.point.x),
+                        Mathf.FloorToInt(hit.point.y),
+                        Mathf.FloorToInt(hit.point.z)
+                    };
             if (TowerController.instance.IsWithinTower(hit.point)) { 
                 PlacePiece(TowerController.instance.transform.position - hit.point);
             }
