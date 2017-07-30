@@ -19,9 +19,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4863180384041130}
-  - component: {fileID: 114454614832426528}
+  - component: {fileID: 114627305423029354}
   m_Layer: 8
-  m_Name: TrampolinePiece
+  m_Name: NeutralPiece
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40,7 +40,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114454614832426528
+--- !u!114 &114627305423029354
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -48,8 +48,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 1417676966779206}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfb9492f5c818e94bb4b6d4f8e098219, type: 3}
+  m_Script: {fileID: 11500000, guid: 3faf369bc5258f0458176dea98f9cf36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  block: {fileID: 1082386715349054, guid: b3d3db22d9f13174b92f4f6560e20ab0, type: 2}
-  destructionTime: 10
+  block: {fileID: 1082386715349054, guid: 19ac256e881223945a015e720ea457f6, type: 2}
+  maxHealth: 30

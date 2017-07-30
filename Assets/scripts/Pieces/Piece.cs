@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Piece : MonoBehaviour {
 
+    const int healthSteps = 5;
+
     public struct int3 {
         public int x, y, z;
 
@@ -25,10 +27,12 @@ public class Piece : MonoBehaviour {
     int maxHealth;
 
     protected TetrisMachine parentMachine;
+    protected GameObject[] blocks;
     protected bool onTower;
     protected bool[,,] pieceValues;
     protected int id;
     protected int health;
+    protected float nextHealthStep;
     protected int blockAmount;
     int3 pieceSize;
 
@@ -48,7 +52,6 @@ public class Piece : MonoBehaviour {
     {
 
     }
-
 
     //PUBLIC
     public void generate(int[,,] values, float radius) {
@@ -83,32 +86,51 @@ public class Piece : MonoBehaviour {
                 }
             }
         }
+
+        blocks = new GameObject[blockAmount];
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            GameObject block = transform.GetChild(i).gameObject;
+            blocks[i] = block;
+        }
     }
 
     public void initialize() {
         onTower = false;
         health = maxHealth;
+        nextHealthStep = maxHealth;
+        setNextHealthStep();
     }
 
     public void tick() {
         if (onTower) {
             health--;
-            updateDamage();
             checkForTimeout();
+            updateDamage();
         }
     }
 
     protected void updateDamage()
     {
-        
-        //foreach (gameObject.transform.ch)
-        //Renderer.material.SetFloat("_HealthPerc", health / maxHealth);
+        float currentHealth = (float)health / (float)maxHealth;
+        if (currentHealth <= nextHealthStep) {
+            setNextHealthStep();
+            foreach (GameObject G in blocks) {
+                G.GetComponent<Renderer>().material.SetFloat("_HealthPerc", currentHealth);
+            }
+        }
+    }
+
+    protected void setNextHealthStep() {
+        nextHealthStep = nextHealthStep - ((float)maxHealth / (float)healthSteps);
     }
 
     protected void checkForTimeout() {
         if (health <= 0) {
             TowerController.instance.RemovePiece(id);
-            Destroy(gameObject);
+            Debug.Log(maxHealth + "  " + health);
+            Destroy(transform.gameObject);
+            Debug.Break();
         }
     }
 
@@ -144,11 +166,8 @@ public class Piece : MonoBehaviour {
 
     public void placeOnTower()
     {
+        float currentHealth = health / maxHealth;
         onTower = true;
-    }
-
-    public void destroyPiece() {
-        Destroy(gameObject);
     }
 
     public Vector3 getPosition()
