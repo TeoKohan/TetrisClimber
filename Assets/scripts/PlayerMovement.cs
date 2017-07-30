@@ -53,7 +53,7 @@ public class PlayerMovement : MonoBehaviour {
     {
         if(hit.transform.position.y < transform.position.y - 1 && hit.gameObject.layer == LayerMask.NameToLayer("Piece"))
         {
-            hit.gameObject.SendMessage("steppedOn");
+            hit.gameObject.transform.parent.SendMessage("steppedOn");
         }
     }
 
