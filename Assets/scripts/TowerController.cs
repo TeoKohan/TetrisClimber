@@ -159,20 +159,23 @@ public class TowerController : MonoBehaviour {
                 for (var z = 0; z < zSize; z++)
                 {
                     // if there's a cube in the spot and I haven't checked that piece yet, find its piece
-                    if (floorSpaces[x, y, z] >= 0 && checkedPieces.FindAll(i => i == floorSpaces[x, y, z]).Count <= 0)
+                    if (floorSpaces[x, y, z] >= 0 && 
+                        checkedPieces.FindAll(i => i == floorSpaces[x, y, z]).Count <= 0)
                     {
                         Piece piece = pieces.Find(p => p.getID() == floorSpaces[x, y, z]);
                         bool goesDown = true;
 
-                        //for all pieces in the block, check if they can go down
-                        for ( var i = 0; i < piece.getBlockAmount(); i++)
+                        //i get the coordinates in my matrix for all the blocks in the piece
+                        List<int3> blocksCoordinates = CoordinatesOf<int>(floorSpaces, piece.getID());
+
+                        //and check if they can go down
+                        foreach (int3 coord in blocksCoordinates)
                         {
-                            int3 coord = CoordinatesOf<int>(floorSpaces, floorSpaces[x, y, z]);
                             //if the block's not at the bottom, it may need to go down
                             if (coord.y != 0) { 
-                                coord = new int3(coord.x, coord.y - 1, coord.z);
+                                int3 newCoord = new int3(coord.x, coord.y - 1, coord.z);
                                 // if the coordinates BELOW that block is occupied, it can't go down
-                                if (floorSpaces[coord.x, coord.y, coord.z] >=0) {
+                                if (floorSpaces[newCoord.x, newCoord.y, newCoord.z] >=0) {
                                     goesDown = false;
                                     checkedPieces.Add(piece.getID());
                                     break;
@@ -212,11 +215,12 @@ public class TowerController : MonoBehaviour {
 
 
     //accessory method for the CheckBlockStatus method, pretty useful shit!
-    public static int3 CoordinatesOf<T>(T[,,] matrix, T value)
+    public static List<int3> CoordinatesOf<T>(T[,,] matrix, T value)
     {
         int w = matrix.GetLength(0); // width
         int h = matrix.GetLength(1); // height
         int d = matrix.GetLength(2); // height
+        List<int3> coordinates = new List<int3>();
 
         for (int x = 0; x < w; ++x)
         {
@@ -225,12 +229,12 @@ public class TowerController : MonoBehaviour {
                 for (int z = 0; z < d; ++z)
                 {
                     if (matrix[x, y, z].Equals(value))
-                        return new int3(x, y, z);
+                        coordinates.Add(new int3(x, y, z);
                 }
             }
         }
 
-        return new int3(-1, -1, -1);
+        return coordinates;
     }
 
 
