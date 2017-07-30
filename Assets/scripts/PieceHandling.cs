@@ -146,10 +146,7 @@ public class PieceHandling : MonoBehaviour {
                 Mathf.Floor(hit.point.y), 
                 Mathf.Floor(hit.point.z));
 
-            piece.transform.rotation = Quaternion.Euler(new Vector3(
-                piece.transform.rotation.eulerAngles.x,
-                Mathf.Round(piece.transform.rotation.eulerAngles.y / 90) * 90,
-                piece.transform.rotation.eulerAngles.z));
+            piece.transform.rotation = Quaternion.Euler(0,0,0);
         }
     }
 
