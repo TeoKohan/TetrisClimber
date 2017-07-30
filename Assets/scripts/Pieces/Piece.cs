@@ -32,6 +32,7 @@ public class Piece : MonoBehaviour {
     protected bool[,,] pieceValues;
     protected int id;
     protected int health;
+
     protected float nextHealthStep;
     protected int blockAmount;
     int3 pieceSize;
