@@ -147,7 +147,7 @@ public class TowerController : MonoBehaviour {
 
         pieces.Add(piece);
 
-        Vector3 piecePosition = transform.position + new Vector3(position[0] , position[1], position[2] );
+        Vector3 piecePosition = transform.position + new Vector3(position[0] + piece.getPieceSize().x / 2, position[1], position[2] + piece.getPieceSize().z / 2);
 
         return piecePosition;
     }
