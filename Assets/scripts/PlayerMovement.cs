@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour {
     private float freeFallSpeed;
     private Animator anim;
     private CharacterController cc;
+    private bool onTrampoline = false;
 
     [SerializeField]
     private float speed;
@@ -17,7 +18,7 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField]
     private float jumpSpeed;
     [SerializeField]
-    private float superJumpMultiplier = 1.5f;
+    private float superJumpMultiplier = 2;
 
 
     // Use this for initialization
@@ -32,8 +33,9 @@ public class PlayerMovement : MonoBehaviour {
 
         if (cc.isGrounded)
         {
-            if (Input.GetButton("Jump"))
+            if (Input.GetButton("Jump") || onTrampoline)
             {
+                Debug.Log("Entering Jump");
                 Jump();
             }
             else
@@ -45,6 +47,14 @@ public class PlayerMovement : MonoBehaviour {
         doMovement();
 
 
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if(hit.transform.position.y < transform.position.y - 1 && hit.gameObject.layer == LayerMask.NameToLayer("Piece"))
+        {
+            hit.gameObject.SendMessage("steppedOn");
+        }
     }
 
     public void doMovement()
@@ -63,18 +73,27 @@ public class PlayerMovement : MonoBehaviour {
 
     public void Jump()
     {
-        freeFallSpeed = -jumpSpeed;
+        float jumpMultiplier = 1;
+        if (onTrampoline)
+        {
+            jumpMultiplier = superJumpMultiplier;
+            onTrampoline = false;
+        }
+        if(cc.isGrounded)
+        {
+            freeFallSpeed = -jumpSpeed * jumpMultiplier;
+        }
     }
 
-    public void SpecialJump()
+    public void IsOnTrampoline()
     {
-        freeFallSpeed = -jumpSpeed * superJumpMultiplier;
+        onTrampoline = true;
     }
-
 
     public void Teleport()
     {
         //Preguntar por el portal mas alto de la torre
+        //getHighest(PieceTypes pieceType)
         Vector3 highestPortal = Vector3.one;
         transform.Translate(highestPortal);
     }
