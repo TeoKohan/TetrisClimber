@@ -64,7 +64,19 @@ public class Piece : MonoBehaviour {
     }
 
     public void initialize() {
-        Invoke("pickUp", Random.Range(1f, 5f));
+        //Invoke("pickUp", Random.Range(1f, 5f));
+    }
+
+    public void tick() {
+        timer--;
+        checkForTimeout();
+    }
+
+    public void checkForTimeout() {
+        if (timer <= 0) {
+            //Hook message of death to TowerController.instance.removePiece(id);
+            //Destroy/Destroy Animation
+        }
     }
 
     public void goDown() {
@@ -105,6 +117,11 @@ public class Piece : MonoBehaviour {
 
     public void destroyPiece() {
         Destroy(gameObject);
+    }
+
+    public Vector3 getPosition()
+    {
+        return transform.position;
     }
 
     public int getID()
