@@ -246,8 +246,9 @@ public class TowerController : MonoBehaviour {
             {
                 for (int z = 0; z < d; ++z)
                 {
-                    if (matrix[x, y, z].Equals(value))
-                        coordinates.Add(new int3(x, y, z);
+                    if (matrix[x, y, z].Equals(value)) {
+                        coordinates.Add(new int3(x, y, z));
+                    }
                 }
             }
         }
