@@ -17,41 +17,45 @@ public class PieceHandling : MonoBehaviour {
     // Update is called once per frame
     void Update() {
 
+        //if the player's holding something
         if (piecePivot.childCount > 0)
         {
             CheckForPlacingSpace();
             CheckForRotation();
         }
-
-
+        
         //On click
         if (Input.GetMouseButtonDown(0))
         {
             // if the player hasn't picked up a piece, let them pick up a piece
-            if (piecePivot.transform.childCount == 0) { 
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                if (Physics.Raycast(ray, out hit, maxDistanceToInteract, pieceLayer))
-                {
-                    PickPiece(hit.collider.gameObject);
-                }
+            if (piecePivot.transform.childCount == 0) {
+                TryToPickUpPiece();
             } else
             //if the player picked up something, try to place it
             {
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                if (Physics.Raycast(ray, out hit, maxDistanceToInteract, towerLayer))
-                {
-                    SetPiece(hit.point);
-                }
+                TryToPlacePiece();
             }
         }
     }
 
 
-    void PickPiece(GameObject piece)
+    //TRY TO PICK UP PIECE
+    // Verifies if there was a piece in range where the player clicked
+    void TryToPickUpPiece()
+    {
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out hit, maxDistanceToInteract, pieceLayer))
+        {
+            PickUpPiece(hit.collider.gameObject);
+        }
+    }
+
+
+    //PICK UP PIECE
+    // Picks the piece and adds it to the holding spot
+    void PickUpPiece(GameObject piece)
     {
         Piece p = piece.GetComponent<Piece>();
         p.pickUp();
@@ -60,7 +64,22 @@ public class PieceHandling : MonoBehaviour {
     }
 
 
-    void SetPiece(Vector3 point)
+    //TRY TO PLACE PIECE
+    // Verifies if the player is clicking a valid spot for the piece
+    void TryToPlacePiece()
+    {
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out hit, maxDistanceToInteract, towerLayer))
+        {
+            PlacePiece(hit.point);
+        }
+    }
+
+    //PLACE PIECE
+    // Locates a piece in a spot
+    void PlacePiece(Vector3 point)
     {
         GameObject piece = piecePivot.GetChild(0).gameObject;
         Piece p = piece.GetComponent<Piece>();
@@ -75,7 +94,10 @@ public class PieceHandling : MonoBehaviour {
             piece.transform.position = newPosition;
         } 
     }
-    
+
+
+    //CHECK FOR PLACING SPACE
+    // Verifies if the player is aiming to a valid placing spot for the piece
     void CheckForPlacingSpace()
     {
         GameObject piece = piecePivot.GetChild(0).gameObject;
@@ -99,8 +121,8 @@ public class PieceHandling : MonoBehaviour {
         }
     }
 
-
-
+    //CHECK FOR ROTATION
+    // Verifies if the player is trying to rotate the piece
     void CheckForRotation()
     {
         GameObject piece = piecePivot.GetChild(0).gameObject;
