@@ -70,11 +70,13 @@ public class TowerController : MonoBehaviour {
     //Notify pieces that they should move in time (?)
     void NotifyTick()
     {
-        foreach (Piece p in pieces)
-        {
-            p.tick();
+        if (pieces.Count > 0) {
+            foreach (Piece p in pieces)
+            {
+                p.tick();
+            }
+            Invoke("NotifyTick", tickDuration);
         }
-        Invoke("NotifyTick", tickDuration);
     }
 
 
