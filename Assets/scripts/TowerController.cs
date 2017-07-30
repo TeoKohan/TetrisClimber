@@ -280,4 +280,39 @@ public class TowerController : MonoBehaviour {
         return false;
     }
 
+    // GET NEIGHBOURING PIECES
+    // A method that returns a list of all neighbouring pieces of a certain piece
+    // id: the ID for the certain piece
+
+    public List<Piece> GetNeigbouringPieces (int id)
+    {
+        List<Piece> neighbours = new List<Piece>();
+
+        List<int3> pieceCoordinates = CoordinatesOf<int>(floorSpaces, id);
+
+        //foreach block in the piece
+        foreach (int3 coord in pieceCoordinates)
+        {
+            //check out its neighbours
+            for (var x = coord.x - 1; x <= coord.x + 1; x++)
+            {
+                for (var y = coord.y - 1; y<= coord.y + 1; y++)
+                {
+                    for (var z = coord.z - 1; z <= coord.z + 1; x++)
+                    {
+                        //if they're not part of our piece and we haven't found them before, add them to the list
+                        if (floorSpaces[x,y,z] != id && 
+                            neighbours.FindAll(p =>p.getID() == floorSpaces[x, y, z]).Count == 0)
+                        {
+                            neighbours.Add(pieces.Find(p => p.getID() == floorSpaces[x,y,z]));
+                        }
+                    }
+                }
+            }
+        }
+
+        return neighbours;
+    }
+
+
 }
