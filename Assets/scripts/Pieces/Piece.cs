@@ -15,18 +15,16 @@ public class Piece : MonoBehaviour {
         }
 
     }
-
     [SerializeField]
-    protected Material material;
+    protected PieceTypes pieceType;
     [SerializeField]
     protected GameObject block;
 
     //[SerializeField] GameObject property;
     [SerializeField]
-    int destructionTime;
+    int health;
 
     protected TetrisMachine parentMachine;
-    protected PieceTypes pieceType;
     protected bool onTower;
     protected bool[,,] pieceValues;
     protected int id;
@@ -87,9 +85,8 @@ public class Piece : MonoBehaviour {
         }
     }
 
-    public void initialize(PieceTypes pieceType) {
+    public void initialize() {
         onTower = false;
-        this.pieceType = pieceType;
     }
 
     public void tick() {
