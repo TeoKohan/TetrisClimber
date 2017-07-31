@@ -331,12 +331,13 @@ public class TowerController : MonoBehaviour {
         Vector3 highestBlock = Vector3.zero;
         for (int x = 0; x < xSize; ++x)
         {
-            for (int y = ySize; y <= 0; --y)
+            for (int y = ySize-1; y >= 0; --y)
             {
                 for (int z = 0; z < zSize; ++z)
                 {
-                    Piece piece = pieces.Find(p => p.getID() == floorSpaces[x, y, z]);
-                    if (piece.GetType() == T)
+                    Piece piece = pieces.Find(p => p.getID() == floorSpaces[x, y, z] && p.GetType() == T);
+
+                    if (piece)
                     {
                         List<int3> coordinates = CoordinatesOf<int>(floorSpaces, piece.getID());
                         coordinates = coordinates.OrderByDescending(c => c.y).ToList();
@@ -346,7 +347,7 @@ public class TowerController : MonoBehaviour {
                             if (floorSpaces[coord.x, coord.y +1, coord.z] == -1 &&
                                 floorSpaces[coord.x, coord.y + 2, coord.z] == -1)
                             {
-                                highestBlock = transform.position + new Vector3(x + 1 / 2, y, z + 1/2);
+                                highestBlock = transform.position + new Vector3(x + 1, y + 1/2, z + 1);
 
                                 z = zSize;
                                 y = -1;
