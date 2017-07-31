@@ -326,7 +326,6 @@ public class Piece : MonoBehaviour
 
     public void validPlaceFound()
     {
-        Debug.Log("Valid");
         foreach (GameObject G in blocks)
         {
             G.GetComponent<Renderer>().material = placeCorrect;
@@ -335,7 +334,6 @@ public class Piece : MonoBehaviour
 
     public void validPlaceNotFound()
     {
-        Debug.Log("Invalid");
         foreach (GameObject G in blocks)
         {
             G.GetComponent<Renderer>().material = placeIncorrect;

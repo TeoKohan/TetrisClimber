@@ -35,7 +35,6 @@ public class PlayerMovement : MonoBehaviour {
         {
             if (Input.GetButton("Jump") || onTrampoline)
             {
-                Debug.Log("Entering Jump");
                 Jump();
             }
             else

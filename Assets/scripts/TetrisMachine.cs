@@ -108,6 +108,8 @@ public class TetrisMachine : MonoBehaviour {
            if (pieceSlots[i]) { debug += "1  ";}
            else { debug += "0  "; }
         }
+
+        Debug.Log(debug);
     }
 
     //PUBLIC
@@ -116,11 +118,23 @@ public class TetrisMachine : MonoBehaviour {
     //ADD AND REMOVE BLOCKS AT RUNTIME
 
     public void generatePiece() {
-        if (pieceSlots[maxPieces-1] == false) {
+
+        bool debugBool = true;
+        for (int i = 0; i < maxPieces; i++) {
+            if (pieces[i].piece != null && pieces[i].percentage <= 0.25f)
+            {
+                debugBool = false;
+                break;
+            }
+        }
+
+        if (pieceSlots[maxPieces-1] == false && debugBool) {
+        //if (debugBool) {
             addCurrentPiece();
             int slot = getPieceSlot();
             pieceSlots[slot] = true;
             GameObject GOPiece = Instantiate(pieceTypes[getRandomBlockType()], spawnpoint.position, Quaternion.identity);
+            GOPiece.name = "Slot: " + slot;
             Piece pieceScript = GOPiece.GetComponent<Piece>();
             pieceScript.setTetrisMachine(this);
             pieceScript.generate(selectRandomBlock(), radius);
@@ -135,19 +149,21 @@ public class TetrisMachine : MonoBehaviour {
                     break;
                 }
             }
-            
-            debugSlots();
+            Debug.Log("generating piece at slot: " + slot);
+            //debugSlots();
         }
     }
 
     public void removePiece(int removePieceID) {
+
         for (int i = 0; i < maxPieces; i++) {
             if (removePieceID == pieces[i].id) {
                 pieceSlots[pieces[i].slot] = false;
+                Debug.Log("Freeing slot: " + pieces[i].slot);
                 pieces[i].piece = null;
-                debugSlots();
                 removeCurrentPiece();
-                pushBackPieces();
+                pushBackPieces(i);
+                debugSlots();
                 return;
             }
         }
@@ -178,7 +194,7 @@ public class TetrisMachine : MonoBehaviour {
     protected void deployConveyorBelt(int length) {
         for (int i = 0; i < length; i++) {
             GameObject GOConveyor = Instantiate(conveyorBeltPiece, transform.position + transform.forward * (i * radius * 6 + radius * 9), transform.rotation);
-            GOConveyor.name = "conveyor_" + i;
+            GOConveyor.name = "conveyor_" + (length - 1 - i);
             conveyorBelt[length - 1 - i] = GOConveyor.GetComponent<ConveyorBeltPiece>();
         }
     }
@@ -193,23 +209,37 @@ public class TetrisMachine : MonoBehaviour {
         return parsePiece(getRandomBlock());
     }
 
-    protected void pushBackPieces() {
-        for (int i = 1; i < maxPieces; i++) {
+    protected void pushBackPieces(int removeSlot) {
+        for (int i = removeSlot; i < maxPieces; i++) {
+            if (pieceSlots[i] == true)
+            {
+                int slotIndex = -1;
 
-            int moveSlots = isClearBehind(pieces[i].slot);
+                for (int j = 0; j < maxPieces; j++)
+                {
+                    if (pieces[j].slot == i) { slotIndex = j; break; }
+                }
 
-            if (pieces[i].piece != null && moveSlots > 0) {
-               
-                int newSlot = pieces[i].slot - moveSlots;
+                int moveSlots = isClearBehind(pieces[slotIndex].slot);
 
-                pieces[i].origin = pieces[i].piece.getPosition();
-                pieces[i].destination = getPieceDestination(newSlot);
-                pieces[i].goal = 1f - ((1f / maxPieces) * (newSlot));
-                pieces[i].percentage = pieces[i].goal - 1f - ((1f / maxPieces) * (pieces[i].slot));
+                Debug.Log(i + " Has " + moveSlots + " spaces behind.");
 
-                pieceSlots[pieces[i].slot] = false;
-                pieces[i].slot = newSlot;
-                pieceSlots[pieces[i].slot] = true;
+                if (pieces[slotIndex].piece != null && moveSlots > 0)
+                {
+
+                    int newSlot = pieces[slotIndex].slot - moveSlots;
+
+                    pieces[slotIndex].origin = pieces[slotIndex].piece.getPosition();
+                    pieces[slotIndex].destination = getPieceDestination(newSlot);
+                    pieces[slotIndex].goal = 1f - ((1f / maxPieces) * (newSlot));
+                    pieces[slotIndex].percentage = pieces[slotIndex].goal - 1f - ((1f / maxPieces) * (pieces[slotIndex].slot));
+
+                    pieceSlots[pieces[slotIndex].slot] = false;
+                    pieces[slotIndex].slot = newSlot;
+                    pieceSlots[pieces[slotIndex].slot] = true;
+
+                    pieces[slotIndex].piece.name = "Slot: " + newSlot;
+                }
             }
         }
     }
@@ -300,15 +330,16 @@ public class TetrisMachine : MonoBehaviour {
     }
 
     protected int getPieceSlot() {
+        int slot = -1;
 
-        for (int i = 0; i < maxPieces; i++)
+        for (int i = maxPieces - 1; i >= 0; i--)
         {
             if (pieceSlots[i] == false && isClearAhead(i))
             {
-                return i;
+                slot = i;
             }
         }
-        return -1;
+        return slot;
     }
 
     protected bool isClearAhead(int slot) {
