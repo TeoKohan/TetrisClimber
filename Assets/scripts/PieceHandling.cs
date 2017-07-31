@@ -55,7 +55,7 @@ public class PieceHandling : MonoBehaviour {
         {
             if (hit.transform.parent.parent == null) {
                 PickUpPiece(hit.transform.parent);
-            } else if (hit.transform.parent.parent.gameObject.layer != towerLayer)
+            } else if (((1 << hit.transform.parent.parent.gameObject.layer) & towerLayer) == 0)
             {
                 PickUpPiece(hit.transform.parent);
             }
