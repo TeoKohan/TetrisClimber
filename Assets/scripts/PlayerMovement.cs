@@ -35,7 +35,6 @@ public class PlayerMovement : MonoBehaviour {
         {
             if (Input.GetButton("Jump") || onTrampoline)
             {
-                Debug.Log("Entering Jump");
                 Jump();
             }
             else
@@ -90,11 +89,8 @@ public class PlayerMovement : MonoBehaviour {
         onTrampoline = true;
     }
 
-    public void Teleport()
+    public void Teleport(Vector3 highestPortal)
     {
-        //Preguntar por el portal mas alto de la torre
-        //getHighest(PieceTypes pieceType)
-        Vector3 highestPortal = Vector3.one;
         transform.Translate(highestPortal);
     }
 
