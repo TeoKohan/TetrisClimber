@@ -256,7 +256,7 @@ public class Piece : MonoBehaviour
                     if (pieceValues[u, v, w] == true)
                     {
                         //DEINVERT U BECAUSE PIVOT IS SHIFTED IN PICKUP
-                        blocks[blockCount].transform.position = transform.position + (new Vector3(u, v, w) * radius * 2) + new Vector3(1, 0.5f, -1) * radius * 2;
+                        blocks[blockCount].transform.position = transform.position + (new Vector3(-u, v, w) * radius * 2) + new Vector3(1,0,1) / 2;
                         blockCount++;
                         //PASS DURATION TO BLOCK COMPONENT
                     }
