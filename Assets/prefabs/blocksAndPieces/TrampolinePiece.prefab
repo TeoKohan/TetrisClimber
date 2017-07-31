@@ -52,4 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   block: {fileID: 1082386715349054, guid: 4ada2928b27988a48898dcff0aacaaed, type: 2}
+  normal: {fileID: 2100000, guid: fddbcdfac84172e46a2df035bc6fbdc2, type: 2}
+  placeCorrect: {fileID: 2100000, guid: 26dbf795bc5b3de428bddd99f5790d54, type: 2}
+  placeIncorrect: {fileID: 2100000, guid: 809521f56aac7314bb9c11b851655c98, type: 2}
   maxHealth: 60
