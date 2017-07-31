@@ -64,6 +64,71 @@ public class Piece : MonoBehaviour
 
     }
 
+    protected void setInternalDimensions(bool[,,] values) {
+        internalPieceDimensions = new int3(0, 0, 0);
+
+        int x = values.GetLength(0);
+        int y = values.GetLength(1);
+        int z = values.GetLength(2);
+
+        bool[] xSize = new bool[3];
+        bool[] ySize = new bool[3];
+        bool[] zSize = new bool[3];
+
+        for (int u = 0; u < x; u++) {
+            for (int v = 0; v < y; v++) {
+                for (int w = 0; w < z; w++) {
+                    if (values[u,v,w] == true) {
+                        xSize[u] = true;
+                        ySize[v] = true;
+                        zSize[w] = true;
+                    } 
+                }
+            }
+        }
+
+        if (xSize[0] && xSize[2])
+        {
+            internalPieceDimensions.x = 3;
+        }
+        else if ((xSize[0] && xSize[1]) || (xSize[1] && xSize[2]))
+        {
+            internalPieceDimensions.x = 2;
+        }
+        else
+        {
+            internalPieceDimensions.x = 1;
+        }
+
+        if (ySize[0] && ySize[2])
+        {
+            internalPieceDimensions.y = 3;
+        }
+        else if ((ySize[0] && ySize[1]) || (ySize[1] && ySize[2]))
+        {
+            internalPieceDimensions.y = 2;
+        }
+        else
+        {
+            internalPieceDimensions.y = 1;
+        }
+
+        if (zSize[0] && zSize[2])
+        {
+            internalPieceDimensions.z = 3;
+        }
+        else if ((zSize[0] && zSize[1]) || (zSize[1] && zSize[2]))
+        {
+            internalPieceDimensions.z = 2;
+        }
+        else
+        {
+            internalPieceDimensions.z = 1;
+        }
+
+        Debug.Log(internalPieceDimensions.x + " " + internalPieceDimensions.y + " " + internalPieceDimensions.z);
+    }
+
     //PUBLIC
     public void generate(int[,,] values, float radius)
     {
@@ -75,11 +140,14 @@ public class Piece : MonoBehaviour
         int z = values.GetLength(2);
 
         pieceSize = new int3(x, y, z);
+        
         pieceValues = new bool[x, y, z];
 
         //Vector3 offset = new Vector3(-1f, 1f, 1f);
 
         blockAmount = 0;
+
+       
 
         for (int u = 0; u < x; u++)
         {
@@ -111,6 +179,7 @@ public class Piece : MonoBehaviour
         }
 
         setNormalMaterial();
+        setInternalDimensions(pieceValues);
     }
 
     public void initialize()
