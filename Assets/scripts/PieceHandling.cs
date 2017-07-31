@@ -55,7 +55,7 @@ public class PieceHandling : MonoBehaviour {
         {
             if (hit.transform.parent.parent == null) {
                 PickUpPiece(hit.transform.parent);
-            } else if (hit.transform.parent.parent.gameObject.layer != towerLayer)
+            } else if (((1 << hit.transform.parent.parent.gameObject.layer) & towerLayer) == 0)
             {
                 PickUpPiece(hit.transform.parent);
             }
@@ -136,11 +136,12 @@ public class PieceHandling : MonoBehaviour {
         if (Physics.Raycast(ray, out hit))
         {
             if (hit.distance >= minDistanceToSeePossiblePlacement) { 
-                if (TowerController.instance.IsWithinTower(hit.point)) { 
+                if (TowerController.instance.IsWithinTower(hit.point)) {
+                    Vector3 relPosition = TowerController.instance.transform.position - hit.point;
                     int[] position = new int[] {
-                        Mathf.FloorToInt(hit.point.x),
-                        Mathf.FloorToInt(hit.point.y),
-                        Mathf.FloorToInt(hit.point.z)
+                        Mathf.FloorToInt(Mathf.Abs(relPosition.x)),
+                        Mathf.FloorToInt(Mathf.Abs(relPosition.y)),
+                        Mathf.FloorToInt(Mathf.Abs(relPosition.z))
                     };
            
                     if (TowerController.instance.CheckForPlace(p, position) && hit.distance <= maxDistanceToInteract)
