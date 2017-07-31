@@ -93,18 +93,18 @@ public class TowerController : MonoBehaviour {
         bool[,,] p = piece.getMatrix();
         // Basic exception logic: if the piece is too big, it shouldn't fit
         //to be replaced, gotta go through the piece's matrix
-        if (piece.getPieceSize().x + position[0] > xSize ||
-            piece.getPieceSize().y + position[1] > ySize ||
-            piece.getPieceSize().z + position[2] > zSize) {
+        if (piece.getInternalPieceDimensions().x + position[0] > xSize ||
+            piece.getInternalPieceDimensions().y + position[1] > ySize ||
+            piece.getInternalPieceDimensions().z + position[2] > zSize) {
 
             return false;
         } else {
             //assuming the desired reference point in the piece is 0,0,0
-            for (var x = 0; x < piece.getPieceSize().x; x++)
+            for (var x = 0; x < piece.getInternalPieceDimensions().x; x++)
             {
-                for (var y = 0;  y < piece.getPieceSize().y; y++)
+                for (var y = 0;  y < piece.getInternalPieceDimensions().y; y++)
                 {
-                    for (var z = 0; z < piece.getPieceSize().z; z++)
+                    for (var z = 0; z < piece.getPiecgetInternalPieceDimensionseSize().z; z++)
                     {
                         // if there's a cube in the piece AND there's a cube in the floor
                         if (p[x,y,z] && 
@@ -134,11 +134,11 @@ public class TowerController : MonoBehaviour {
     public Vector3 PlacePiece(Piece piece, int[] position)
     {
         //assuming the desired reference point in the piece is 0,0,0
-        for (var x = 0; x < piece.getPieceSize().x; x++)
+        for (var x = 0; x < piece.getInternalPieceDimensions().x; x++)
         {
-            for (var y = 0;y < piece.getPieceSize().y ; y++)
+            for (var y = 0;y < piece.getInternalPieceDimensions().y ; y++)
             {
-                for (var z = 0;z < piece.getPieceSize().z; z++)
+                for (var z = 0;z < piece.getInternalPieceDimensions().z; z++)
                 {
                     // if there's a cube in the piece, set it in the matrix
                     if (piece.getMatrix()[x, y , z])
