@@ -45,6 +45,7 @@ public class Piece : MonoBehaviour
     protected float nextHealthStep;
     protected int blockAmount;
     int3 pieceSize;
+    int3 internalPieceDimensions;
 
 
     //VIRTUAL METHODS
@@ -256,7 +257,7 @@ public class Piece : MonoBehaviour
                     if (pieceValues[u, v, w] == true)
                     {
                         //DEINVERT U BECAUSE PIVOT IS SHIFTED IN PICKUP
-                        blocks[blockCount].transform.position = transform.position + (new Vector3(u, v, w) * radius * 2) + new Vector3(1, 0.5f, -1) * radius * 2;
+                        blocks[blockCount].transform.position = transform.position + (new Vector3(u, v, w) * radius * 2) + new Vector3(0.5f, 0.5f, 0.5f) * radius * 2;
                         blockCount++;
                         //PASS DURATION TO BLOCK COMPONENT
                     }
@@ -326,7 +327,6 @@ public class Piece : MonoBehaviour
 
     public void validPlaceFound()
     {
-        Debug.Log("Valid");
         foreach (GameObject G in blocks)
         {
             G.GetComponent<Renderer>().material = placeCorrect;
@@ -335,7 +335,6 @@ public class Piece : MonoBehaviour
 
     public void validPlaceNotFound()
     {
-        Debug.Log("Invalid");
         foreach (GameObject G in blocks)
         {
             G.GetComponent<Renderer>().material = placeIncorrect;
@@ -395,6 +394,11 @@ public class Piece : MonoBehaviour
     public void setTetrisMachine(TetrisMachine tetrisMachine)
     {
         parentMachine = tetrisMachine;
+    }
+
+    public int3 getInternalPieceDimensions ()
+    {
+        return internalPieceDimensions;
     }
 
 }
