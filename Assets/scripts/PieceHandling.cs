@@ -71,13 +71,7 @@ public class PieceHandling : MonoBehaviour {
         p.pickUp();
         piece.transform.SetParent(piecePivot);
         piece.transform.localPosition = new Vector3(0,0,0);
-
         
-        for (var i = 0; i < piece.childCount; i++ )
-        {
-            Transform block = piece.GetChild(i);
-            block.position += new Vector3((float)1.5, 0, (float)1.5);
-        }
     }
 
 
