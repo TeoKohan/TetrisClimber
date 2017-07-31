@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 public class TowerControllerBCK : MonoBehaviour {
-
+    /*
     static public TowerControllerBCK instance;
     private int[,,] floorSpaces;
     private List<Piece> pieces;
@@ -387,6 +387,5 @@ public class TowerControllerBCK : MonoBehaviour {
 
         return piecesUpToHeight;
     }
-
-
+    */
 }

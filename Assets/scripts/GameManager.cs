@@ -1,35 +1,75 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour {
+public static class GameManager {
 
-    public static GameManager instance;
+    private static List<Player> players;
+    private static List<TowerController> towercontrollers;
 
-    [SerializeField]
-    protected Transform player;
-    
+    public static void initialize() {
 
+        towercontrollers = new List<TowerController>();
 
-    void Awake()
-    {
-        if (instance)
-        {
-            Destroy(gameObject);
+        foreach (TowerController TC in Object.FindObjectsOfType<TowerController>()) {
+            TC.initialize();
         }
-        else
-        {
-            instance = this;
+
+        players = new List<Player>();
+
+        foreach (Player P in Object.FindObjectsOfType<Player>()) {
+            P.initialize();
         }
     }
 
-    void Win ()
-    {
-        //winning condition
+    public static void update() {
+        foreach (Player P in players) {
+            P.update();
+        }
+    }
+
+    public static void checkWin () {
+        //winning condition => win
+       
+    }
+
+    private static void win() {
         Debug.Log("WIN!");
     }
 
-    public Transform GetPlayer()
+    public static void addPlayer(Player player) {
+        Debug.Log(player.transform.name);
+        players.Add(player);
+    }
+
+    public static void addTower(TowerController tower) {
+        Debug.Log("ADD");
+        towercontrollers.Add(tower);
+    }
+
+    public static Player getPlayer() {
+        return players[0];
+    }
+
+    public static Player getPlayer(int index) {
+        return players[index];
+    }
+
+    public static Vector3 getPlayerPosition() {
+        return players[0].transform.position;
+    }
+
+    public static Vector3 getPlayerPosition(int index) {
+        return players[index].transform.position;
+    }
+
+    public static TowerController getTowerController()
     {
-        return player;
+        Debug.Log(towercontrollers.Count);
+        return towercontrollers[0];
+    }
+
+    public static TowerController getTowerController(int index)
+    {
+        return towercontrollers[index];
     }
 }

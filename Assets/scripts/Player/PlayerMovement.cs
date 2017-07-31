@@ -22,42 +22,31 @@ public class PlayerMovement : MonoBehaviour {
 
 
     // Use this for initialization
-    void Awake()
-    {
+    public void initialize() {
         cc = GetComponent<CharacterController>();
     }
 
     // Update is called once per frame
-    void FixedUpdate()
-    {
-
-        if (cc.isGrounded)
-        {
-            if (Input.GetButton("Jump") || onTrampoline)
-            {
-                Jump();
+    public void update() {
+        if (cc.isGrounded) {
+            if (Input.GetButton("Jump") || onTrampoline) {
+                jump();
             }
-            else
-            {
+            else {
                 freeFallSpeed = 0;
             }
         }
 
         doMovement();
-
-
     }
 
-    private void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        if(hit.transform.position.y < transform.position.y - 1 && hit.gameObject.layer == LayerMask.NameToLayer("Piece"))
-        {
+    private void OnControllerColliderHit(ControllerColliderHit hit) {
+        if(hit.transform.position.y < transform.position.y - 1 && hit.gameObject.layer == LayerMask.NameToLayer("Piece")) {
             hit.gameObject.transform.parent.SendMessage("steppedOn");
         }
     }
 
-    public void doMovement()
-    {
+    public void doMovement() {
         // gestión de gravedad con CC sin RB
         Vector3 movement = Vector3.zero;
         freeFallSpeed += gravity * Time.deltaTime;
@@ -72,8 +61,7 @@ public class PlayerMovement : MonoBehaviour {
         cc.Move(movement);
     }
 
-    public void Jump()
-    {
+    public void jump() {
         float jumpMultiplier = 1;
 
         if (onTrampoline)
@@ -88,13 +76,11 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    public void IsOnTrampoline()
-    {
+    public void isOnTrampoline() {
         onTrampoline = true;
     }
 
-    public void Teleport(Vector3 highestPortal)
-    {
+    public void Teleport(Vector3 highestPortal) {
         CharacterController cc = GetComponent<CharacterController>();
         float height = cc.height / 2;
         Vector3 heightCompensation = Vector3.up * height;

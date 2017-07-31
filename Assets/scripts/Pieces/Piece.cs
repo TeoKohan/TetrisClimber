@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityScript;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Piece : MonoBehaviour
 {
@@ -11,7 +8,7 @@ public class Piece : MonoBehaviour
     [SerializeField]
     int maxHealth;
     [SerializeField]
-    protected PieceTypes pieceType;
+    protected PieceType pieceType;
     [SerializeField]
     protected GameObject block;
     [SerializeField]
@@ -19,11 +16,12 @@ public class Piece : MonoBehaviour
     [SerializeField]
     protected Material placingMaterial;
 
-    Helper.int3 pieceSize;
+    int3[] blockPositions;
+    int3 pieceSize;
 
     protected int id;
     protected int health;
-    protected int[,,] pieceValues;
+    protected PieceType[,,] pieceValues;
     protected int blockAmount;
 
     protected float radius;
@@ -49,11 +47,11 @@ public class Piece : MonoBehaviour
     }
 
     //PUBLIC
-    public void generateBlocks(int[,,] values, float radius)
+    public void generateBlocks(PieceType[,,] values, float radius)
     {
         this.radius = radius;
 
-        pieceSize = new Helper.int3(values.GetLength(0), values.GetLength(1), values.GetLength(2));
+        pieceSize = new int3(values.GetLength(0), values.GetLength(1), values.GetLength(2));
 
         int x = pieceSize.x;
         int y = pieceSize.y;
@@ -63,15 +61,12 @@ public class Piece : MonoBehaviour
 
         blockAmount = 0;
 
-        for (int u = 0; u < x; u++)
-        {
-            for (int v = 0; v < y; v++)
-            {
-                for (int w = 0; w < z; w++)
-                {
-                    if (values[u, v, w] >= 1)
-                    {
-                        GameObject newBlock = Instantiate(block, transform.position + (new Vector3(u, v, w) * radius * 2) - Vector3.one * radius * 2, Quaternion.identity);
+        for (int u = 0; u < x; u++) {
+            for (int v = 0; v < y; v++) {
+                for (int w = 0; w < z; w++) {
+                    if (values[u, v, w] != PieceType.Empty) {
+                        pieceValues[u, v, w] = values[u, v, w];
+                        GameObject newBlock = Instantiate(block, transform.position + (new Vector3(u, v, w) * radius * 2) - new Vector3(pieceSize.x / 2, pieceSize.y / 2 , pieceSize.z / 2) * radius * 2, Quaternion.identity);
                         newBlock.transform.parent = this.transform;
                         blockAmount++;
                     }
@@ -80,26 +75,22 @@ public class Piece : MonoBehaviour
         }
 
         blocks = new GameObject[blockAmount];
-        for (int i = 0; i < transform.childCount; i++)
-        {
+        for (int i = 0; i < transform.childCount; i++) {
             GameObject block = transform.GetChild(i).gameObject;
             blocks[i] = block;
         }
 
-        setNormalMaterial();
+        setDefaultMaterial();
     }
 
-    public void initialize()
-    {
+    public void initialize() {
         placing = false;
         onTower = false;
         health = maxHealth;
     }
 
-    public void tick()
-    {
-        if (onTower)
-        {
+    public void tick() {
+        if (onTower) {
             health--;
             checkForTimeout();
             updateDamage();
@@ -130,22 +121,17 @@ public class Piece : MonoBehaviour
         }
     }
 
-    protected void updateBlocks()
-    {
+    protected void updateBlocks() {
         int x = pieceSize.x;
         int y = pieceSize.y;
         int z = pieceSize.z;
 
         int blockCount = 0;
 
-        for (int u = 0; u < x; u++)
-        {
-            for (int v = 0; v < y; v++)
-            {
-                for (int w = 0; w < z; w++)
-                {
-                    if (pieceValues[u, v, w] >= 1)
-                    {
+        for (int u = 0; u < x; u++) {
+            for (int v = 0; v < y; v++) {
+                for (int w = 0; w < z; w++) {
+                    if (pieceValues[u, v, w] != PieceType.Empty) {
                         blocks[blockCount].transform.position = transform.position + (new Vector3(u, v, w) * radius * 2) - Vector3.one * radius * 2;
                         blockCount++;
                     }
@@ -163,7 +149,7 @@ public class Piece : MonoBehaviour
 
     protected void checkForTimeout() {
         if (health <= 0) {
-            TowerController.instance.RemovePiece(id);
+            //TowerController.instance.RemovePiece(id);
             Destroy(transform.gameObject);
         }
     }
@@ -176,11 +162,26 @@ public class Piece : MonoBehaviour
          * also, do remember to close the door, it gets chilly in the night dear.*/
     }
 
-    public Helper.int3 getPieceSize() {
+    public Vector3 getPosition()
+    {
+        return transform.position;
+    }
+
+    public int3[] getBlockPositions()
+    {
+        return blockPositions;
+    }
+
+    public void setBlockPositions(int3[] blockPositions)
+    {
+        this.blockPositions = blockPositions;
+    }
+
+    public int3 getPieceSize() {
         return pieceSize;
     }
 
-    public void rotate(Helper.int3 axis) {
+    public void rotate(int3 axis) {
         //Helper.Rotate
         updateBlocks();
     }
@@ -212,8 +213,8 @@ public class Piece : MonoBehaviour
         onTower = true;
     }
 
-    public Vector3 getPosition() {
-        return transform.position;
+    public bool isOnTower() {
+        return onTower;
     }
 
     public int getID() {
@@ -228,7 +229,7 @@ public class Piece : MonoBehaviour
         return blockAmount;
     }
 
-    public int[,,] getMatrix() {
+    public PieceType[,,] getValues() {
         return pieceValues;
     }
 

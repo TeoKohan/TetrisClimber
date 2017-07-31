@@ -1,386 +1,198 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class TowerController : MonoBehaviour {
 
-    static public TowerController instance;
-    private int[,,] floorSpaces;
-    private List<Piece> pieces;
+    [SerializeField]
+    protected int goal;
+    [SerializeField]
+    private float tickInterval;
 
     [SerializeField]
-    private int xSize;
+    private int _xSize;
     [SerializeField]
-    private int ySize;
+    private int _ySize;
     [SerializeField]
-    private int zSize;
-    [SerializeField]
-    private Transform floorGraphic;
-    [SerializeField]
-    protected List<Transform> milestones;
-    [SerializeField]
-    protected Transform victoryGoal;
-    [SerializeField]
-    private float tickDuration;
+    private int _zSize;
 
-    void Awake()
-    {
-        if (instance)
-        {
-            Destroy(gameObject);
-        }
+    [SerializeField]
+    protected int[] milestones;
 
-        else {
-            instance = this;
+    private IDManager idManager;
 
-            //let's set up the slot matrix
-            floorSpaces = new int[xSize,ySize,zSize];
-            for (int x = 0; x < xSize; x++)
-            {
-                for (int y = 0; y < ySize; y++)
-                {
-                    for (int z = 0; z < zSize; z++)
-                    {
-                        floorSpaces[x, y, z] = -1;
-                    }
+    private bool active;
+
+    private int3 towerSize;
+    private PieceType[,,] values;
+    private int[,,] IDs;
+    private Piece[] pieces;
+
+    //INITIALIZE VALUES
+    public void initialize() {
+
+        GameManager.addTower(this);
+
+        idManager = new IDManager();
+        idManager.initialize();
+
+        towerSize = new int3(_xSize, _ySize, _zSize);
+
+        values = new PieceType[towerSize.x, towerSize.y, towerSize.z];
+        IDs = new int[towerSize.x, towerSize.y, towerSize.z];
+
+        //ASSIGN PROGRAMATICALLY AND ADD DOUBLING FUNCTION
+        pieces = new Piece[1024];
+
+        Invoke("tickPieces", tickInterval);
+
+        activate();
+
+        //REMOVE AFTER INITIAL RELEASE
+    }
+
+    //ACTIVATE TOWER
+    public void activate() {
+        active = true;
+        Invoke("tickPieces", tickInterval);
+    }
+
+    //DEACTIVATE TOWER
+    public void deactivate() {
+        active = false;
+    }
+
+    //TICK FOR ALL PIECES
+    void tickPieces() {
+        if (active) {
+            foreach (Piece P in pieces) {
+                if (P != null) {
+                    P.tick();
                 }
             }
-            //and the list for all involved pieces
-            pieces = new List<Piece>();
-            
-            //and make the graphic base larger
-            floorGraphic.localPosition = new Vector3(xSize / 2, floorGraphic.localPosition.y, zSize / 2);
-            floorGraphic.localScale = new Vector3(xSize, floorGraphic.localScale.y, zSize);
 
-            // Start ticking!
-            Invoke("NotifyTick",tickDuration);
+            Invoke("tickPieces", tickInterval);
         }
     }
 
-
-
-    //TICK
-    //Notify pieces that they should move in time (?)
-    void NotifyTick()
-    {
-        if (pieces.Count > 0) {
-            for (int i = 0; i < pieces.Count; i++) {
-                pieces[i].tick();
-            }
-        }
-        Invoke("NotifyTick", tickDuration);
+    //PLACES A PIECE IF IT CAN
+    public bool place(Piece piece, int3 position) {
+        if (!canPlace(piece, position) || !active) { return false; }
+        piece.setID(idManager.getID());
+        placePiece(piece, position);
+        return true;
     }
 
+    //CHECKS IF A PIECE CAN BE PLACED
+    protected bool canPlace(Piece piece, int3 position) {
 
+        if (!checkExtents(piece.getPieceSize(), position)) { return false; }
 
-    // CHECK FOR PLACE
+        bool available = true;
 
-    //This method will tell you if there's enough space in the tower for the piece you want to place
-    // piece: the matrix for any given piece
-    // position: the position within the tower that was clicked by the user
+        int3 pieceSize = piece.getPieceSize();
 
-    public bool CheckForPlace(Piece piece, int[] position)
-    {
-        bool[,,] p = piece.getMatrix();
-        // Basic exception logic: if the piece is too big, it shouldn't fit
-        //to be replaced, gotta go through the piece's matrix
-        if (piece.getInternalPieceDimensions().x + position[0] > xSize ||
-            piece.getInternalPieceDimensions().y + position[1] > ySize ||
-            piece.getInternalPieceDimensions().z + position[2] > zSize) {
+        for (int x = 0; x < pieceSize.x; x++) {
+            for (int y = 0; y < pieceSize.y; y++) {
+                for (int z = 0; z < pieceSize.x; z++) {
 
-            return false;
-        } else {
-            //assuming the desired reference point in the piece is 0,0,0
-            for (var x = 0; x < piece.getInternalPieceDimensions().x; x++)
-            {
-                for (var y = 0;  y < piece.getInternalPieceDimensions().y; y++)
-                {
-                    for (var z = 0; z < piece.getInternalPieceDimensions().z; z++)
-                    {
-                        // if there's a cube in the piece AND there's a cube in the floor
-                        if (p[x,y,z] && 
-                            floorSpaces[position[0]+x, position[1]+y, position[2]+z] >= 0)
-                        {
-                            //break!
-                            return false;
-                        }
+                    //IF THE SPACE IN TOWER IS EMPTY OR THE SPACE IN THE BLOCK IS EMPTY THEN THERE IS SPACE,
+                    //IF NOT SPACE ISNT AVAILABLE
+                    if (!(values[position.x + x, position.y + y, position.z + z] == PieceType.Empty ||
+                        piece.getValues()[x, y, z] == PieceType.Empty)) {
+                        return false;
                     }
+
                 }
             }
         }
 
+    return available;
+    }
+
+    //CHECKS IF PIECE IS WITHIN BOUNDARIES
+    protected bool checkExtents(int3 pieceSize, int3 position) {
+
+        if ((pieceSize + position) > towerSize) { return false; }
         return true;
     }
 
 
+    //WRITES TO VALUES OF THIS TOWERCONTROLLER
+    protected void placePiece(Piece piece, int3 position) {
 
+        int ID = piece.getID();
+        PieceType[,,] pieceValues = piece.getValues();
 
-    //PLACE PIECE
+        int3 pieceSize = piece.getPieceSize();
 
-    //This method effectively sets a piece in the tower
-    // piece: the matrix for any given piece
-    // position: the position within the tower that was clicked by the user
-    // returns the vector3 for the desired position of the piece
+        for (int x = 0; x < pieceSize.x; x++) {
+            for (int y = 0; y < pieceSize.y; y++) {
+                for (int z = 0; z < pieceSize.x; z++) {
+                    if (piece.getValues()[x, y, z] != PieceType.Empty) {
+                        values[position.x + x, position.y + y, position.z + z] = pieceValues[x, y, z];
+                        IDs[position.x + x, position.y + y, position.z + z] = ID;
 
-    public Vector3 PlacePiece(Piece piece, int[] position)
-    {
-        //assuming the desired reference point in the piece is 0,0,0
-        for (var x = 0; x < piece.getInternalPieceDimensions().x; x++)
-        {
-            for (var y = 0;y < piece.getInternalPieceDimensions().y ; y++)
-            {
-                for (var z = 0;z < piece.getInternalPieceDimensions().z; z++)
-                {
-                    // if there's a cube in the piece, set it in the matrix
-                    if (piece.getMatrix()[x, y , z])
-                    {
-                        floorSpaces[position[0] + x, position[1] + y, position[2] + z] = piece.getID() ;
+                        pieces[piece.getID()] = piece;
+                        //DEBUG BLOCKS HERE
                     }
                 }
             }
         }
-        pieces.Add(piece);
-
-        Vector3 piecePosition = transform.position + new Vector3(position[0], position[1], position[2]);
-
-        return piecePosition;
     }
 
+    //GETS THE REAL WORLD POSITION OF A MATRIX POSITION
+    public static int3 worldToMatrixPosition(Vector3 position)
+    {
+        int3 blockPosition = new int3(0, 0, 0);
+        //Tower center - tower radius * vector.one + position * radius * 2
+        return blockPosition;
+    }
 
-    
+    //GETS THE REAL WORLD POSITION OF A MATRIX POSITION
+    public static Vector3 matrixToWorldPosition(int3 position) {
+        Vector3 blockPosition = Vector3.zero;
+        //Tower center - tower radius * vector.one + position * radius * 2
+        return blockPosition;
+    }
 
     // CHECK BLOCK STATUS
-
     // This method is meant to be run anytime that someone wants to see if pieces must fall in the tower
     // WARNING! This method is recursive and will run until no pieces can fall!
-
-    public void CheckBlockStatus()
-    {
-        // we'll use some basic variables to optimize this beauty
-        List<int> checkedPieces = new List<int>();
-        bool somethingWentDown = false;
-
-        for (var x = 0; x < xSize; x++)
-        {
-            for (var y = 0; y < ySize; y++)
-            {
-                for (var z = 0; z < zSize; z++)
-                {
-                    // if there's a cube in the spot and I haven't checked that piece yet, find its piece
-                    if (floorSpaces[x, y, z] >= 0 && 
-                        checkedPieces.FindAll(i => i == floorSpaces[x, y, z]).Count <= 0)
-                    {
-                        Piece piece = pieces.Find(p => p.getID() == floorSpaces[x, y, z]);
-                        bool goesDown = true;
-
-                        //i get the coordinates in my matrix for all the blocks in the piece
-                        List<int3> blocksCoordinates = CoordinatesOf<int>(floorSpaces, piece.getID());
-
-                        //and check if they can go down
-                        foreach (int3 coord in blocksCoordinates)
-                        {
-                            //if the block's not at the bottom, it may need to go down
-                            if (coord.y != 0) { 
-                                int3 newCoord = new int3(coord.x, coord.y - 1, coord.z);
-                                // if the coordinates BELOW that block is occupied, it can't go down
-                                if (floorSpaces[newCoord.x, newCoord.y, newCoord.z] >=0) {
-                                    goesDown = false;
-                                    checkedPieces.Add(piece.getID());
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                //if the block's at the bottom, it can't possibly go down.
-                                goesDown = false;
-                                checkedPieces.Add(piece.getID());
-                                break;
-                            }
-                        }
-                        
-                        //if the piece can go down, then it should
-                        if (goesDown)
-                        {
-                            piece.goDown();
-                            somethingWentDown = true;
-                        }
-
-                        //anyway, we've checked this one
-                        checkedPieces.Add(piece.getID());
-
-                    }
-                }
-            }
-        }
-
-        //if anything moved down, then we have to recheck everything just in case. Yikes!
-        if (somethingWentDown)
-        {
-            CheckBlockStatus();
-        }
-
+    public void checkBlockStatus() {
+        //TODO: DO
     }
-
-
-    //accessory method for the CheckBlockStatus method, pretty useful shit!
-    public static List<Helper.int3> CoordinatesOf<T>(T[,,] matrix, T value)
-    {
-        int w = matrix.GetLength(0); // width
-        int h = matrix.GetLength(1); // height
-        int d = matrix.GetLength(2); // height
-        List<Helper.int3> coordinates = new List<Helper.int3>();
-
-        for (int x = 0; x < w; ++x)
-        {
-            for (int y = 0; y < h; ++y)
-            {
-                for (int z = 0; z < d; ++z)
-                {
-                    if (matrix[x, y, z].Equals(value)) {
-                        coordinates.Add(new Helper.int3(x, y, z));
-                    }
-                }
-            }
-        }
-
-        return coordinates;
-    }
-
 
     //REMOVE PIECE
     // Takes out a piece from the tower
+    public void removePiece(int id) {
 
-    public void RemovePiece(int id)
-    {
-        pieces.Remove(pieces.Find(p => p.getID() == id));
-        List<Helper.int3> pieceCoordinates = CoordinatesOf<int>(floorSpaces, id);
-        foreach (Helper.int3 coord in pieceCoordinates)
-        {
-            floorSpaces[coord.x, coord.y,coord.z] = -1;
+        Piece piece = pieces[id];
+
+        foreach (int3 i in piece.getBlockPositions()) {
+            values[i.x, i.y, i.z] = PieceType.Empty;
+            IDs[i.x, i.y, i.z] = 0;
         }
-    }
 
-
-    //IS WITHIN TOWER
-    // Checks if a point is within the tower
-    public bool IsWithinTower(Vector3 point)
-    {
-        if (point.x > transform.position.x && point.x < transform.position.x + xSize &&
-            point.y > transform.position.y && point.y < transform.position.y + ySize &&
-            point.z > transform.position.z && point.z < transform.position.z + zSize)
-        {
-            return true;
-        }
-        return false;
+        idManager.returnID(id);
     }
 
     // GET NEIGHBOURING PIECES
     // A method that returns a list of all neighbouring pieces of a certain piece
     // id: the ID for the certain piece
 
-    public List<Piece> GetNeigbouringPieces (int id)
-    {
-        List<Piece> neighbours = new List<Piece>();
-
-        List<int3> pieceCoordinates = CoordinatesOf<int>(floorSpaces, id);
-
-        //foreach block in the piece
-        foreach (int3 coord in pieceCoordinates)
-        {
-            //check out its neighbours
-            for (var x = coord.x - 1; x <= coord.x + 1 && x < xSize; x++)
-            {
-                if (x < 0)
-                    x = 0;
-                for (var y = coord.y - 1; y <= coord.y + 1 && y < ySize; y++)
-                {
-                    if (y < 0)
-                        y = 0;
-                    for (var z = coord.z - 1; z <= coord.z + 1 && z < zSize; x++)
-                    {
-                        if (z < 0)
-                            z = 0;
-                        //if they're not part of our piece and we haven't found them before, add them to the list
-                        if (floorSpaces[x,y,z] != id && 
-                            neighbours.FindAll(p =>p.getID() == floorSpaces[x, y, z]).Count == 0)
-                        {
-                            neighbours.Add(pieces.Find(p => p.getID() == floorSpaces[x,y,z]));
-                        }
-                    }
-                }
-            }
-        }
-
-        return neighbours;
+    public Piece[] getNeigbouringPieces (int id) {
+        return pieces;
     }
 
-
-
-
-    public Vector3 GetHighestBlockOfType(System.Type T)
-    {
-        Vector3 highestBlock = Vector3.zero;
-        for (int x = 0; x < xSize; ++x)
-        {
-            for (int y = ySize-1; y >= 0; --y)
-            {
-                for (int z = 0; z < zSize; ++z)
-                {
-                    Piece piece = pieces.Find(p => p.getID() == floorSpaces[x, y, z] && p.GetType() == T);
-
-                    if (piece)
-                    {
-                        List<int3> coordinates = CoordinatesOf<int>(floorSpaces, piece.getID());
-                        coordinates = coordinates.OrderByDescending(c => c.y).ToList();
-
-                        foreach (int3 coord in coordinates)
-                        {
-                            if (floorSpaces[coord.x, coord.y +1, coord.z] == -1 &&
-                                floorSpaces[coord.x, coord.y + 2, coord.z] == -1)
-                            {
-                                highestBlock = transform.position + new Vector3(x + 1, y + 1/2, z + 1);
-
-                                z = zSize;
-                                y = -1;
-                                x = xSize;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        Debug.Log("Mi posiciones es " + transform.position);
-        return highestBlock;
+    public Vector3 getHighestBlockOfType(System.Type T) {
+        return Vector3.zero;
     }
 
-
-
-
-    public List<Piece> getPiecesUpToHeight(int height)
-    {
-        List<Piece> piecesUpToHeight = new List<Piece>();
-
-        for (int x = 0; x < xSize; ++x)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                for (int z = 0; z < zSize; ++z)
-                {
-                    if (floorSpaces[x,y,z] != -1) { 
-                        Piece piece = pieces.Find(p => p.getID() == floorSpaces[x, y, z]);
-                        if (!piecesUpToHeight.Find(p => p.getID() == floorSpaces[x, y, z]))
-                            piecesUpToHeight.Add(piece);
-                    }
-                }
-            }
-        }
-
-        return piecesUpToHeight;
+    public Piece[] getPiecesUpToHeight(int height) {
+        return pieces;
     }
 
-    public List<Transform> GetMilestones()
-    {
+    public int[] getMilestones() {
         return milestones;
     }
 }

@@ -75,7 +75,7 @@ public class TetrisMachine : MonoBehaviour {
     //DEBUG
     private void generateDebugPiece() {
         int randomPiece = getRandomBlock();
-        drawDebugPiece(parsePiece(randomPiece));
+        //drawDebugPiece(parsePiece(randomPiece));
     }
 
     private void drawDebugPiece(int[,,] pieceValues) {
@@ -133,10 +133,10 @@ public class TetrisMachine : MonoBehaviour {
             GOPiece.name = "Slot: " + slot;
             Piece pieceScript = GOPiece.GetComponent<Piece>();
             pieceScript.setTetrisMachine(this);
-            pieceScript.generate(selectRandomBlock(), radius);
+            pieceScript.generateBlocks(selectRandomBlock(), radius);
             pieceScript.setID(generateID());
             pieceScript.initialize();
-            PieceState P = new PieceState(pieceScript, spawnpoint.position, getPieceDestination(slot), pieceScript.getID(),  slot, 1f - ((1f / maxPieces) * (slot)));
+            PieceState P = new PieceState(pieceScript, spawnpoint.position + Vector3.up * pieceScript.getPieceSize().y / 2, getPieceDestination(slot) + Vector3.up * pieceScript.getPieceSize().y / 2, pieceScript.getID(),  slot, 1f - ((1f / maxPieces) * (slot)));
 
             for (int i = 0; i < maxPieces; i++) {
                 if (pieces[i].piece == null) {
@@ -200,7 +200,7 @@ public class TetrisMachine : MonoBehaviour {
         return tempID;
     }
 
-    protected int[,,] selectRandomBlock() {
+    protected PieceType[,,] selectRandomBlock() {
         return parsePiece(getRandomBlock());
     }
 
@@ -278,7 +278,7 @@ public class TetrisMachine : MonoBehaviour {
         return 0;
     }
 
-    protected int[,,] parsePiece(int index)
+    protected PieceType[,,] parsePiece(int index)
     {
         string text = blocks[index].text;
         string[] fields = text.Split(';');
@@ -294,7 +294,7 @@ public class TetrisMachine : MonoBehaviour {
 
         fields[2] = fields[2].Replace("\r\n", string.Empty);
 
-        int[,,] values = new int[x, y, z];
+        PieceType[,,] values = new PieceType[x, y, z];
         for (int u = 0; u < x; u++)
         {
             for (int w = 0; w < z; w++)
@@ -302,7 +302,7 @@ public class TetrisMachine : MonoBehaviour {
                 for (int v = 0; v < y; v++)
                 {
                     //Debug.Log(values[u, v, w]);
-                    values[u, v, w] = (int)char.GetNumericValue(fields[2][u + w * x + v * x * z]);
+                    values[u, v, w] = (PieceType)char.GetNumericValue(fields[2][u + w * x + v * x * z]);
                 }
             }
         }

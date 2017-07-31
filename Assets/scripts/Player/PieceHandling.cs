@@ -6,113 +6,112 @@ public class PieceHandling : MonoBehaviour {
     [SerializeField]
     private Transform piecePivot;
     [SerializeField]
-    private float maxDistanceToInteract;
+    private float maxInteractDistance;
     [SerializeField]
     private float maxDistanceToSeePossiblePlacement;
     [SerializeField]
     private float minDistanceToSeePossiblePlacement;
+
     [SerializeField]
     private LayerMask pieceLayer;
     [SerializeField]
     private LayerMask towerLayer;
 
-    void Update() {
+    private TowerController currentTowerController;
 
-        //if the player's holding something
-        if (piecePivot.childCount > 0) {
-            CheckForPlacingSpace();
-            CheckForRotation();
+    private Piece currentPiece;
+
+    private bool holding;
+
+    //JUST TEMPORARY, VALID WHEN A SINGLE TOWERCONTROLLER IS PRESENT
+    public void initialize() {
+         currentTowerController = GameManager.getTowerController();
+
+        currentPiece = null;
+        holding = false;
+    }
+
+    public void update() {
+
+        bool click = Input.GetMouseButtonDown(0);
+
+        if (holding) {
+            Vector3 placePosition = getTargetPosition();
+            checkForRotation();
+            //displayPiece();
+
+            if (click) {
+                int3 matrixPosition = TowerController.worldToMatrixPosition(placePosition);
+                if (canPlace(matrixPosition)) {
+                    placePiece(placePosition);
+                }
+            }
         }
-        
-        //On click
-        if (Input.GetMouseButtonDown(0)) {
-            // if the player hasn't picked up a piece, let them pick up a piece
-            if (piecePivot.transform.childCount == 0) {
-                TryToPickUpPiece();
-            } else
-            //if the player picked up something, try to place it
-            {
-                TryToPlacePiece();
+        else if (click) {
+            Debug.Log("Click");
+            Transform pieceTransform = getPiece();
+            if (pieceTransform != null) {
+                Piece piece = pieceTransform.GetComponent<Piece>();
+                if (canPickUp(piece)) {
+                    pickUp(pieceTransform);
+                }
             }
         }
     }
 
-
-    //TRY TO PICK UP PIECE
-    // Verifies if there was a piece in range where the player clicked
-    void TryToPickUpPiece()
-    {
+    protected Transform getPiece() {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out hit, maxDistanceToInteract, pieceLayer))
-        {
-            if (hit.transform.parent.parent == null) {
-                PickUpPiece(hit.transform.parent);
-            } else if (((1 << hit.transform.parent.parent.gameObject.layer) & towerLayer) == 0)
-            {
-                PickUpPiece(hit.transform.parent);
-            }
+        if (Physics.Raycast(ray, out hit, maxInteractDistance, pieceLayer)) {
+            Debug.Log(hit.transform.parent.name);
+            return hit.transform.parent;
         }
+
+        return null;
+    }
+
+    protected bool canPickUp(Piece piece) {
+        return piece.isOnTower();
+    }
+
+    void pickUp(Transform pieceTransform) {
+        Piece piece = pieceTransform.GetComponent<Piece>();
+        piece.pickUp();
+
+        pieceTransform.SetParent(piecePivot);
+        pieceTransform.localPosition = new Vector3(0,piece.getPieceSize().y / 2f, 0);
+
+        currentPiece = piece;
     }
 
 
-    //PICK UP PIECE
-    // Picks the piece and adds it to the holding spot
-    void PickUpPiece(Transform piece)
-    {
-        Piece p = piece.GetComponent<Piece>();
-        p.pickUp();
-        piece.transform.SetParent(piecePivot);
-        piece.transform.localPosition = new Vector3(0,0,0);
-        
+    protected Vector3 getTargetPosition() {
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, maxInteractDistance)) {
+            return hit.point;
+        }
+        return Vector3.zero;
     }
-
 
     //TRY TO PLACE PIECE
     // Verifies if the player is clicking a valid spot for the piece
-    void TryToPlacePiece() {
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out hit, maxDistanceToInteract))
-        {
-            int[] position = new int[] {
-                        Mathf.FloorToInt(hit.point.x),
-                        Mathf.FloorToInt(hit.point.y),
-                        Mathf.FloorToInt(hit.point.z)
-                    };
-            if (TowerController.instance.IsWithinTower(hit.point)) { 
-                PlacePiece(TowerController.instance.transform.position - hit.point);
-            }
-        }
+    bool canPlace(int3 matrixPosition) {
+        return currentTowerController.place(currentPiece, matrixPosition);
     }
 
     //PLACE PIECE
     // Locates a piece in a spot
-    void PlacePiece(Vector3 point)
-    {
-        GameObject piece = piecePivot.GetChild(0).gameObject;
-        Piece p = piece.GetComponent<Piece>();
-        int[] position = new int[] {
-            Mathf.FloorToInt(Mathf.Abs(point.x)),
-            Mathf.FloorToInt(Mathf.Abs(point.y)),
-            Mathf.FloorToInt(Mathf.Abs(point.z))
-        };
-        
-        if(TowerController.instance.CheckForPlace(p, position))
-        {
-            piece.transform.position = TowerController.instance.PlacePiece(p, position);
-            piece.transform.parent = TowerController.instance.transform;
-            p.placeOnTower();
-            piece.layer = LayerMask.NameToLayer("Piece");
-        } 
+    void placePiece(Vector3 point) {
+        currentPiece.transform.parent = null;
     }
 
 
     //CHECK FOR PLACING SPACE
     // Verifies if the player is aiming to a valid placing spot for the piece
-    void CheckForPlacingSpace()
+    /*
+    void checkForPlacingSpace()
     {
         GameObject piece = piecePivot.GetChild(0).gameObject;
         Piece p = piece.GetComponent<Piece>();
@@ -136,7 +135,7 @@ public class PieceHandling : MonoBehaviour {
                             Mathf.FloorToInt(relPosition.z)
                         };
 
-                        if (TowerController.instance.CheckForPlace(p, position) && hit.distance <= maxDistanceToInteract)
+                        if (currentTowerController.place(p, position) && hit.distance <= maxDistanceToInteract)
                         {
                             p.validPlaceFound();
                         }
@@ -173,29 +172,12 @@ public class PieceHandling : MonoBehaviour {
                     piece.transform.rotation.eulerAngles.z));
             }
         }
-    }
+    }*/
 
     //CHECK FOR ROTATION
     // Verifies if the player is trying to rotate the piece
-    void CheckForRotation()
+    void checkForRotation()
     {
-        GameObject piece = piecePivot.GetChild(0).gameObject;
-        Piece p = piece.GetComponent<Piece>();
-
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            p.RotateInX();
-        }
-
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            p.RotateInY();
-        }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            p.RotateInZ();
-        }
+        //TODO: DO
     }
-
 }
