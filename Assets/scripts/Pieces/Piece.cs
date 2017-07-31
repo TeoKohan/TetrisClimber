@@ -24,6 +24,12 @@ public class Piece : MonoBehaviour
     protected PieceTypes pieceType;
     [SerializeField]
     protected GameObject block;
+    [SerializeField]
+    protected Material normal;
+    [SerializeField]
+    protected Material placeCorrect;
+    [SerializeField]
+    protected Material placeIncorrect;
 
     //[SerializeField] GameObject property;
     [SerializeField]
@@ -102,6 +108,8 @@ public class Piece : MonoBehaviour
             GameObject block = transform.GetChild(i).gameObject;
             blocks[i] = block;
         }
+
+        setNormalMaterial();
     }
 
     public void initialize()
@@ -216,8 +224,6 @@ public class Piece : MonoBehaviour
                 }
             }
         }
-
-        Debug.Log(dString);
     }
 
     public void rotateY3x3()
@@ -320,25 +326,39 @@ public class Piece : MonoBehaviour
 
     public void validPlaceFound()
     {
-
+        Debug.Log("Valid");
+        foreach (GameObject G in blocks)
+        {
+            G.GetComponent<Renderer>().material = placeCorrect;
+        }
     }
 
     public void validPlaceNotFound()
     {
+        Debug.Log("Invalid");
+        foreach (GameObject G in blocks)
+        {
+            G.GetComponent<Renderer>().material = placeIncorrect;
+        }
+    }
 
+    protected void setNormalMaterial() {
+        foreach (GameObject G in blocks)
+        {
+            G.GetComponent<Renderer>().material = normal;
+        }
     }
 
     public void pickUp()
     {
         parentMachine.removePiece(id);
         relocate();
-
-        InvokeRepeating("rotateX3x3_90", 0f, 0.5f);
     }
 
     public void placeOnTower()
     {
         float currentHealth = health / maxHealth;
+        setNormalMaterial();
         onTower = true;
     }
 
