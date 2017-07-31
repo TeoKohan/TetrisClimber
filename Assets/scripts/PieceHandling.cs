@@ -126,25 +126,34 @@ public class PieceHandling : MonoBehaviour {
         Piece p = piece.GetComponent<Piece>();
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward, Color.green, maxDistanceToInteract);
 
         if (Physics.Raycast(ray, out hit))
         {
             if (hit.distance >= minDistanceToSeePossiblePlacement) { 
                 if (TowerController.instance.IsWithinTower(hit.point)) {
-                    Vector3 relPosition = TowerController.instance.transform.position - hit.point;
-                    int[] position = new int[] {
-                        Mathf.FloorToInt(Mathf.Abs(relPosition.x)),
-                        Mathf.FloorToInt(Mathf.Abs(relPosition.y)),
-                        Mathf.FloorToInt(Mathf.Abs(relPosition.z))
-                    };
-           
-                    if (TowerController.instance.CheckForPlace(p, position) && hit.distance <= maxDistanceToInteract)
-                    {
-                        p.validPlaceFound();
-                    } else
+                    Vector3 relPosition =  hit.point - TowerController.instance.transform.position;
+                    
+                    if (relPosition.x < 0 || relPosition.y < 0 || relPosition.z < 0)
                     {
                         p.validPlaceNotFound();
+                    } else { 
+                        int[] position = new int[] {
+                            Mathf.FloorToInt(relPosition.x),
+                            Mathf.FloorToInt(relPosition.y),
+                            Mathf.FloorToInt(relPosition.z)
+                        };
+
+                        if (TowerController.instance.CheckForPlace(p, position) && hit.distance <= maxDistanceToInteract)
+                        {
+                            p.validPlaceFound();
+                        }
+                        else
+                        {
+                            p.validPlaceNotFound();
+                        }
                     }
+                                        
                 }
 
                 piece.transform.position = new Vector3(
