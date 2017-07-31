@@ -91,7 +91,12 @@ public class PlayerMovement : MonoBehaviour {
 
     public void Teleport(Vector3 highestPortal)
     {
-        transform.Translate(highestPortal);
+        CharacterController cc = GetComponent<CharacterController>();
+        float height = cc.height / 2;
+        Vector3 heightCompensation = Vector3.up * height;
+
+        Debug.Log("Teleporting to: " + highestPortal);
+        transform.position = highestPortal + heightCompensation;
     }
 
 }

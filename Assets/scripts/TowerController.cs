@@ -359,7 +359,7 @@ public class TowerController : MonoBehaviour {
                 }
             }
         }
-
+        Debug.Log("Mi posiciones es " + transform.position);
         return highestBlock;
     }
 
