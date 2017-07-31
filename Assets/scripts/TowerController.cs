@@ -363,4 +363,29 @@ public class TowerController : MonoBehaviour {
     }
 
 
+
+
+    public List<Piece> getPiecesUpToHeight(int height)
+    {
+        List<Piece> piecesUpToHeight = new List<Piece>();
+
+        for (int x = 0; x < xSize; ++x)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int z = 0; z < zSize; ++z)
+                {
+                    if (floorSpaces[x,y,z] != -1) { 
+                        Piece piece = pieces.Find(p => p.getID() == floorSpaces[x, y, z]);
+                        if (!piecesUpToHeight.Find(p => p.getID() == floorSpaces[x, y, z]))
+                            piecesUpToHeight.Add(piece);
+                    }
+                }
+            }
+        }
+
+        return piecesUpToHeight;
+    }
+
+
 }
