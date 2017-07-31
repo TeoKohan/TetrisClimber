@@ -149,7 +149,6 @@ public class TetrisMachine : MonoBehaviour {
                     break;
                 }
             }
-            Debug.Log("generating piece at slot: " + slot);
             //debugSlots();
         }
     }
