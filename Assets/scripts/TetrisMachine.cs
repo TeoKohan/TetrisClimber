@@ -149,7 +149,7 @@ public class TetrisMachine : MonoBehaviour {
                     break;
                 }
             }
-            //debugSlots();
+            debugSlots();
         }
     }
 
@@ -161,7 +161,7 @@ public class TetrisMachine : MonoBehaviour {
                 Debug.Log("Freeing slot: " + pieces[i].slot);
                 pieces[i].piece = null;
                 removeCurrentPiece();
-                pushBackPieces(i);
+                pushBackPieces(pieces[i].slot);
                 debugSlots();
                 return;
             }
@@ -209,7 +209,8 @@ public class TetrisMachine : MonoBehaviour {
     }
 
     protected void pushBackPieces(int removeSlot) {
-        for (int i = removeSlot; i < maxPieces; i++) {
+        for (int i = removeSlot ; i < maxPieces; i++) {
+            Debug.Log("Slot: " + i + " " + pieceSlots[i]);
             if (pieceSlots[i] == true)
             {
                 int slotIndex = -1;
@@ -235,7 +236,7 @@ public class TetrisMachine : MonoBehaviour {
 
                     pieceSlots[pieces[slotIndex].slot] = false;
                     pieces[slotIndex].slot = newSlot;
-                    pieceSlots[pieces[slotIndex].slot] = true;
+                    pieceSlots[newSlot] = true;
 
                     pieces[slotIndex].piece.name = "Slot: " + newSlot;
                 }

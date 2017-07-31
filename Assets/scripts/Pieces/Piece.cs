@@ -125,8 +125,6 @@ public class Piece : MonoBehaviour
         {
             internalPieceDimensions.z = 1;
         }
-
-        Debug.Log(internalPieceDimensions.x + " " + internalPieceDimensions.y + " " + internalPieceDimensions.z);
     }
 
     //PUBLIC
