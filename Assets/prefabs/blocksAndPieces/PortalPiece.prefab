@@ -55,4 +55,4 @@ MonoBehaviour:
   normal: {fileID: 2100000, guid: 7c7f51bc678b90d4aa3c0bf32cb117c2, type: 2}
   placeCorrect: {fileID: 2100000, guid: 26dbf795bc5b3de428bddd99f5790d54, type: 2}
   placeIncorrect: {fileID: 2100000, guid: 809521f56aac7314bb9c11b851655c98, type: 2}
-  maxHealth: 60
+  maxHealth: 60000
