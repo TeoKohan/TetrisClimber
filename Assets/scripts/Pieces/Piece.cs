@@ -6,7 +6,7 @@ using UnityEngine;
 public class Piece : MonoBehaviour
 {
 
-    const int healthSteps = 5;
+    const int healthSteps = 10;
 
     public struct int3
     {
@@ -42,25 +42,21 @@ public class Piece : MonoBehaviour
     protected int id;
     protected int health;
     protected float radius;
-    protected float nextHealthStep;
     protected int blockAmount;
     int3 pieceSize;
     int3 internalPieceDimensions;
 
 
     //VIRTUAL METHODS
-    public virtual void steppedOn()
-    {
+    public virtual void steppedOn() {
 
     }
 
-    public virtual void onPlace()
-    {
+    public virtual void onPlace() {
 
     }
 
-    public virtual void onTowerUpdate()
-    {
+    public virtual void onTowerUpdate() {
 
     }
 
@@ -167,7 +163,7 @@ public class Piece : MonoBehaviour
             }
         }
 
-        debugArray(pieceValues);
+        //debugArray(pieceValues);
 
         blocks = new GameObject[blockAmount];
         for (int i = 0; i < transform.childCount; i++)
@@ -184,8 +180,6 @@ public class Piece : MonoBehaviour
     {
         onTower = false;
         health = maxHealth;
-        nextHealthStep = maxHealth;
-        setNextHealthStep();
     }
 
     public void tick()
@@ -336,19 +330,10 @@ public class Piece : MonoBehaviour
     protected void updateDamage()
     {
         float currentHealth = (float)health / (float)maxHealth;
-        if (currentHealth <= nextHealthStep)
-        {
-            setNextHealthStep();
-            foreach (GameObject G in blocks)
-            {
-                G.GetComponent<Renderer>().material.SetFloat("_HealthPerc", currentHealth);
-            }
-        }
-    }
-
-    protected void setNextHealthStep()
-    {
-        nextHealthStep = nextHealthStep - ((float)maxHealth / (float)healthSteps);
+         foreach (GameObject G in blocks)
+         {
+             G.GetComponent<Renderer>().material.SetFloat("_Health", currentHealth);
+         }
     }
 
     protected void checkForTimeout()

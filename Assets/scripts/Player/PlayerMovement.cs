@@ -59,13 +59,15 @@ public class PlayerMovement : MonoBehaviour {
     public void doMovement()
     {
         // gestión de gravedad con CC sin RB
+        Vector3 movement = Vector3.zero;
         freeFallSpeed += gravity * Time.deltaTime;
-        Vector3 movement = freeFallSpeed * Vector3.down;
 
-        float mov = Input.GetAxis("Vertical") * speed;
-        float starfe = Input.GetAxis("Horizontal") * speed;
-        movement += mov * transform.forward * Time.deltaTime;
-        movement += starfe * transform.right * Time.deltaTime;
+        float vertical = Input.GetAxis("Vertical");
+        float horizontal = Input.GetAxis("Horizontal");
+        movement += vertical * transform.forward;
+        movement += horizontal * transform.right;
+        movement = movement.normalized * movement.magnitude * speed * Time.deltaTime;
+        movement += freeFallSpeed * Vector3.down;
 
         cc.Move(movement);
     }
@@ -73,11 +75,13 @@ public class PlayerMovement : MonoBehaviour {
     public void Jump()
     {
         float jumpMultiplier = 1;
+
         if (onTrampoline)
         {
             jumpMultiplier = superJumpMultiplier;
             onTrampoline = false;
         }
+
         if(cc.isGrounded)
         {
             freeFallSpeed = -jumpSpeed * jumpMultiplier;

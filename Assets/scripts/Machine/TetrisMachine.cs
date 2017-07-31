@@ -113,10 +113,6 @@ public class TetrisMachine : MonoBehaviour {
     }
 
     //PUBLIC
-
-    //TODO:
-    //ADD AND REMOVE BLOCKS AT RUNTIME
-
     public void generatePiece() {
 
         bool debugBool = true;
@@ -149,7 +145,7 @@ public class TetrisMachine : MonoBehaviour {
                     break;
                 }
             }
-            debugSlots();
+            //debugSlots();
         }
     }
 
@@ -158,11 +154,11 @@ public class TetrisMachine : MonoBehaviour {
         for (int i = 0; i < maxPieces; i++) {
             if (removePieceID == pieces[i].id) {
                 pieceSlots[pieces[i].slot] = false;
-                Debug.Log("Freeing slot: " + pieces[i].slot);
+                //Debug.Log("Freeing slot: " + pieces[i].slot);
                 pieces[i].piece = null;
                 removeCurrentPiece();
                 pushBackPieces(pieces[i].slot);
-                debugSlots();
+                //debugSlots();
                 return;
             }
         }
@@ -210,7 +206,6 @@ public class TetrisMachine : MonoBehaviour {
 
     protected void pushBackPieces(int removeSlot) {
         for (int i = removeSlot ; i < maxPieces; i++) {
-            Debug.Log("Slot: " + i + " " + pieceSlots[i]);
             if (pieceSlots[i] == true)
             {
                 int slotIndex = -1;
@@ -222,7 +217,7 @@ public class TetrisMachine : MonoBehaviour {
 
                 int moveSlots = isClearBehind(pieces[slotIndex].slot);
 
-                Debug.Log(i + " Has " + moveSlots + " spaces behind.");
+                //Debug.Log(i + " Has " + moveSlots + " spaces behind.");
 
                 if (pieces[slotIndex].piece != null && moveSlots > 0)
                 {

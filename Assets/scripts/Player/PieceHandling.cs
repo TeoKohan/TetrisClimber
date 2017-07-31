@@ -16,22 +16,16 @@ public class PieceHandling : MonoBehaviour {
     [SerializeField]
     private LayerMask towerLayer;
 
-
-
-
-    // Update is called once per frame
     void Update() {
 
         //if the player's holding something
-        if (piecePivot.childCount > 0)
-        {
+        if (piecePivot.childCount > 0) {
             CheckForPlacingSpace();
             CheckForRotation();
         }
         
         //On click
-        if (Input.GetMouseButtonDown(0))
-        {
+        if (Input.GetMouseButtonDown(0)) {
             // if the player hasn't picked up a piece, let them pick up a piece
             if (piecePivot.transform.childCount == 0) {
                 TryToPickUpPiece();
@@ -77,9 +71,7 @@ public class PieceHandling : MonoBehaviour {
 
     //TRY TO PLACE PIECE
     // Verifies if the player is clicking a valid spot for the piece
-    void TryToPlacePiece()
-    {
-
+    void TryToPlacePiece() {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 

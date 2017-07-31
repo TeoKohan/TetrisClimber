@@ -6,11 +6,8 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance;
 
     [SerializeField]
-    private Transform player;
-    [SerializeField]
-    private List<Transform> milestones;
-    [SerializeField]
-    private Transform victoryGoal;
+    protected Transform player;
+    
 
 
     void Awake()
@@ -27,17 +24,12 @@ public class GameManager : MonoBehaviour {
 
     void Win ()
     {
-        //tbd winning condition
+        //winning condition
+        Debug.Log("WIN!");
     }
 
     public Transform GetPlayer()
     {
         return player;
     }
-
-    public List<Transform> GetMilestones()
-    {
-        return milestones;
-    }
-
 }

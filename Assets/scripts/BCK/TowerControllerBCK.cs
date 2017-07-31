@@ -2,16 +2,18 @@
 using System.Linq;
 using UnityEngine;
 
-public class TowerController : MonoBehaviour {
+public class TowerControllerBCK : MonoBehaviour {
 
-    static public TowerController instance;
+    static public TowerControllerBCK instance;
     private int[,,] floorSpaces;
     private List<Piece> pieces;
 
-    public struct int3 {
+    public struct int3
+    {
         public int x, y, z;
 
-        public int3(int x, int y, int z) {
+        public int3(int x, int y, int z)
+        {
             this.x = x;
             this.y = y;
             this.z = z;
@@ -27,10 +29,6 @@ public class TowerController : MonoBehaviour {
     private int zSize;
     [SerializeField]
     private Transform floorGraphic;
-    [SerializeField]
-    protected List<Transform> milestones;
-    [SerializeField]
-    protected Transform victoryGoal;
     [SerializeField]
     private float tickDuration;
 
@@ -390,8 +388,5 @@ public class TowerController : MonoBehaviour {
         return piecesUpToHeight;
     }
 
-    public List<Transform> GetMilestones()
-    {
-        return milestones;
-    }
+
 }
