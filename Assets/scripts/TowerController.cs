@@ -8,17 +8,6 @@ public class TowerController : MonoBehaviour {
     private int[,,] floorSpaces;
     private List<Piece> pieces;
 
-    public struct int3 {
-        public int x, y, z;
-
-        public int3(int x, int y, int z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-    }
-
     [SerializeField]
     private int xSize;
     [SerializeField]
@@ -234,12 +223,12 @@ public class TowerController : MonoBehaviour {
 
 
     //accessory method for the CheckBlockStatus method, pretty useful shit!
-    public static List<int3> CoordinatesOf<T>(T[,,] matrix, T value)
+    public static List<Helper.int3> CoordinatesOf<T>(T[,,] matrix, T value)
     {
         int w = matrix.GetLength(0); // width
         int h = matrix.GetLength(1); // height
         int d = matrix.GetLength(2); // height
-        List<int3> coordinates = new List<int3>();
+        List<Helper.int3> coordinates = new List<Helper.int3>();
 
         for (int x = 0; x < w; ++x)
         {
@@ -248,7 +237,7 @@ public class TowerController : MonoBehaviour {
                 for (int z = 0; z < d; ++z)
                 {
                     if (matrix[x, y, z].Equals(value)) {
-                        coordinates.Add(new int3(x, y, z));
+                        coordinates.Add(new Helper.int3(x, y, z));
                     }
                 }
             }
@@ -264,8 +253,8 @@ public class TowerController : MonoBehaviour {
     public void RemovePiece(int id)
     {
         pieces.Remove(pieces.Find(p => p.getID() == id));
-        List<int3> pieceCoordinates = CoordinatesOf<int>(floorSpaces, id);
-        foreach (int3 coord in pieceCoordinates)
+        List<Helper.int3> pieceCoordinates = CoordinatesOf<int>(floorSpaces, id);
+        foreach (Helper.int3 coord in pieceCoordinates)
         {
             floorSpaces[coord.x, coord.y,coord.z] = -1;
         }

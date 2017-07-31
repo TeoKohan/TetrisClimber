@@ -8,43 +8,31 @@ public class Piece : MonoBehaviour
 
     const int healthSteps = 10;
 
-    public struct int3
-    {
-        public int x, y, z;
-
-        public int3(int x, int y, int z)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-    }
+    [SerializeField]
+    int maxHealth;
     [SerializeField]
     protected PieceTypes pieceType;
     [SerializeField]
     protected GameObject block;
     [SerializeField]
-    protected Material normal;
+    protected Material defaultMaterial;
     [SerializeField]
-    protected Material placeCorrect;
-    [SerializeField]
-    protected Material placeIncorrect;
+    protected Material placingMaterial;
 
-    //[SerializeField] GameObject property;
-    [SerializeField]
-    int maxHealth;
+    Helper.int3 pieceSize;
+
+    protected int id;
+    protected int health;
+    protected int[,,] pieceValues;
+    protected int blockAmount;
+
+    protected float radius;
 
     protected TetrisMachine parentMachine;
     protected GameObject[] blocks;
+
+    protected bool placing;
     protected bool onTower;
-    protected bool[,,] pieceValues;
-    protected int id;
-    protected int health;
-    protected float radius;
-    protected int blockAmount;
-    int3 pieceSize;
-    int3 internalPieceDimensions;
 
 
     //VIRTUAL METHODS
@@ -60,88 +48,20 @@ public class Piece : MonoBehaviour
 
     }
 
-    protected void setInternalDimensions(bool[,,] values) {
-        internalPieceDimensions = new int3(0, 0, 0);
-
-        int x = values.GetLength(0);
-        int y = values.GetLength(1);
-        int z = values.GetLength(2);
-
-        bool[] xSize = new bool[3];
-        bool[] ySize = new bool[3];
-        bool[] zSize = new bool[3];
-
-        for (int u = 0; u < x; u++) {
-            for (int v = 0; v < y; v++) {
-                for (int w = 0; w < z; w++) {
-                    if (values[u,v,w] == true) {
-                        xSize[u] = true;
-                        ySize[v] = true;
-                        zSize[w] = true;
-                    } 
-                }
-            }
-        }
-
-        if (xSize[0] && xSize[2])
-        {
-            internalPieceDimensions.x = 3;
-        }
-        else if ((xSize[0] && xSize[1]) || (xSize[1] && xSize[2]))
-        {
-            internalPieceDimensions.x = 2;
-        }
-        else
-        {
-            internalPieceDimensions.x = 1;
-        }
-
-        if (ySize[0] && ySize[2])
-        {
-            internalPieceDimensions.y = 3;
-        }
-        else if ((ySize[0] && ySize[1]) || (ySize[1] && ySize[2]))
-        {
-            internalPieceDimensions.y = 2;
-        }
-        else
-        {
-            internalPieceDimensions.y = 1;
-        }
-
-        if (zSize[0] && zSize[2])
-        {
-            internalPieceDimensions.z = 3;
-        }
-        else if ((zSize[0] && zSize[1]) || (zSize[1] && zSize[2]))
-        {
-            internalPieceDimensions.z = 2;
-        }
-        else
-        {
-            internalPieceDimensions.z = 1;
-        }
-    }
-
     //PUBLIC
-    public void generate(int[,,] values, float radius)
+    public void generateBlocks(int[,,] values, float radius)
     {
-
         this.radius = radius;
 
-        int x = values.GetLength(0);
-        int y = values.GetLength(1);
-        int z = values.GetLength(2);
+        pieceSize = new Helper.int3(values.GetLength(0), values.GetLength(1), values.GetLength(2));
 
-        pieceSize = new int3(x, y, z);
-        
-        pieceValues = new bool[x, y, z];
+        int x = pieceSize.x;
+        int y = pieceSize.y;
+        int z = pieceSize.z;
 
-        //Vector3 offset = new Vector3(-1f, 1f, 1f);
+        pieceValues = values;
 
         blockAmount = 0;
-
-       
 
         for (int u = 0; u < x; u++)
         {
@@ -151,19 +71,13 @@ public class Piece : MonoBehaviour
                 {
                     if (values[u, v, w] >= 1)
                     {
-                        //INVERT U TO GO RIGHT TO LEFT
-                        pieceValues[u, v, w] = true;
-                        GameObject GOBlock = Instantiate(block, transform.position + (new Vector3(-u, v, w) * radius * 2) + new Vector3(1, 0.5f, -1) * radius * 2, Quaternion.identity);
-                        GOBlock.transform.parent = this.transform;
+                        GameObject newBlock = Instantiate(block, transform.position + (new Vector3(u, v, w) * radius * 2) - Vector3.one * radius * 2, Quaternion.identity);
+                        newBlock.transform.parent = this.transform;
                         blockAmount++;
-                        //PASS DURATION TO BLOCK COMPONENT
                     }
-                    else { pieceValues[u, v, w] = false; }
                 }
             }
         }
-
-        //debugArray(pieceValues);
 
         blocks = new GameObject[blockAmount];
         for (int i = 0; i < transform.childCount; i++)
@@ -173,11 +87,11 @@ public class Piece : MonoBehaviour
         }
 
         setNormalMaterial();
-        setInternalDimensions(pieceValues);
     }
 
     public void initialize()
     {
+        placing = false;
         onTower = false;
         health = maxHealth;
     }
@@ -190,78 +104,6 @@ public class Piece : MonoBehaviour
             checkForTimeout();
             updateDamage();
         }
-    }
-
-    private void rotateX3x3_45()
-    {
-        Debug.Log("Rotate X");
-
-        bool store;
-
-        debugArray(pieceValues);
-
-        for (int i = 0; i < 3; i++)
-        {
-            store = pieceValues[i, 0, 0];
-            pieceValues[i, 0, 0] = pieceValues[i, 0, 1];
-            pieceValues[i, 0, 1] = pieceValues[i, 0, 2];
-            pieceValues[i, 0, 2] = pieceValues[i, 1, 2];
-            pieceValues[i, 1, 2] = pieceValues[i, 2, 2];
-            pieceValues[i, 2, 2] = pieceValues[i, 2, 1];
-            pieceValues[i, 2, 1] = pieceValues[i, 2, 0];
-            pieceValues[i, 2, 0] = pieceValues[i, 1, 0];
-            pieceValues[i, 1, 0] = store;
-        }
-
-        debugArray(pieceValues);
-    }
-
-    private void rotateY3x3_45()
-    {
-        Debug.Log("Rotate Y");
-
-        bool store;
-
-        debugArray(pieceValues);
-
-        for (int i = 0; i < 3; i++)
-        {
-            store = pieceValues[0, i, 0];
-            pieceValues[0, i, 0] = pieceValues[0, i, 1];
-            pieceValues[0, i, 1] = pieceValues[0, i, 2];
-            pieceValues[0, i, 2] = pieceValues[1, i, 2];
-            pieceValues[1, i, 2] = pieceValues[2, i, 2];
-            pieceValues[2, i, 2] = pieceValues[2, i, 1];
-            pieceValues[2, i, 1] = pieceValues[2, i, 0];
-            pieceValues[2, i, 0] = pieceValues[1, i, 0];
-            pieceValues[1, i, 0] = store;
-        }
-
-        debugArray(pieceValues);
-    }
-
-    private void rotateZ3x3_45()
-    {
-        Debug.Log("Rotate Z");
-
-        bool store;
-
-        debugArray(pieceValues);
-
-        for (int i = 0; i < 3; i++)
-        {
-            store = pieceValues[0, 0, i];
-            pieceValues[0, 0, i] = pieceValues[1, 0, i];
-            pieceValues[1, 0, i] = pieceValues[2, 0, i];
-            pieceValues[2, 0, i] = pieceValues[2, 1, i];
-            pieceValues[2, 1, i] = pieceValues[2, 2, i];
-            pieceValues[2, 2, i] = pieceValues[1, 2, i];
-            pieceValues[1, 2, i] = pieceValues[0, 2, i];
-            pieceValues[0, 2, i] = pieceValues[0, 1, i];
-            pieceValues[0, 1, i] = store;
-        }
-
-        debugArray(pieceValues);
     }
 
     private void debugArray(bool[,,] a)
@@ -288,24 +130,11 @@ public class Piece : MonoBehaviour
         }
     }
 
-    public void rotateY3x3()
+    protected void updateBlocks()
     {
-
-    }
-
-    public void rotateZ3x3()
-    {
-
-    }
-
-    protected void relocate()
-    {
-
         int x = pieceSize.x;
         int y = pieceSize.y;
         int z = pieceSize.z;
-
-        //Vector3 offset = new Vector3(-1f, 1f, 1f);
 
         int blockCount = 0;
 
@@ -315,142 +144,99 @@ public class Piece : MonoBehaviour
             {
                 for (int w = 0; w < z; w++)
                 {
-                    if (pieceValues[u, v, w] == true)
+                    if (pieceValues[u, v, w] >= 1)
                     {
-                        //DEINVERT U BECAUSE PIVOT IS SHIFTED IN PICKUP
-                        blocks[blockCount].transform.position = transform.position + (new Vector3(u, v, w) * radius * 2) + new Vector3(0.5f, 0.5f, 0.5f) * radius * 2;
+                        blocks[blockCount].transform.position = transform.position + (new Vector3(u, v, w) * radius * 2) - Vector3.one * radius * 2;
                         blockCount++;
-                        //PASS DURATION TO BLOCK COMPONENT
                     }
                 }
             }
         }
     }
 
-    protected void updateDamage()
-    {
-        float currentHealth = (float)health / (float)maxHealth;
-         foreach (GameObject G in blocks)
-         {
-             G.GetComponent<Renderer>().material.SetFloat("_Health", currentHealth);
-         }
+    protected void updateDamage() {
+        float currentHealth = health / maxHealth;
+        foreach (GameObject G in blocks) {
+            G.GetComponent<Renderer>().material.SetFloat("_Health", currentHealth);
+        }
     }
 
-    protected void checkForTimeout()
-    {
-        if (health <= 0)
-        {
+    protected void checkForTimeout() {
+        if (health <= 0) {
             TowerController.instance.RemovePiece(id);
             Destroy(transform.gameObject);
         }
     }
 
-    public void goDown()
-    {
-        //here we execute de property just in case it's a magnet. --Pending--
-        //Notify about the end of the animation
+    public void goDown() {
+        /* Maybe Someday, when grass is greener and water purer.
+         * The trouts play among pruny fingers and their shadows dance in the flickering surface
+         * no one knows why they left but in the wake of the new era we must toil without them
+         * for that is what we do, our sole and irredeemable purpouse is to be.
+         * also, do remember to close the door, it gets chilly in the night dear.*/
     }
 
-    public int3 getPieceSize()
-    {
+    public Helper.int3 getPieceSize() {
         return pieceSize;
     }
 
-    public void RotateInX()
-    {
-        rotateX3x3_45();
-        rotateX3x3_45();
-        relocate();
+    public void rotate(Helper.int3 axis) {
+        //Helper.Rotate
+        updateBlocks();
     }
 
-    public void RotateInY()
-    {
-        rotateY3x3_45();
-        rotateY3x3_45();
-        relocate();
-    }
-
-    public void RotateInZ()
-    {
-        rotateZ3x3_45();
-        rotateZ3x3_45();
-        relocate();
-    }
-
-    public void validPlaceFound()
-    {
-        foreach (GameObject G in blocks)
-        {
-            G.GetComponent<Renderer>().material = placeCorrect;
+    public void validPlaceFound() {
+        foreach (GameObject G in blocks) {
         }
     }
 
-    public void validPlaceNotFound()
-    {
-        foreach (GameObject G in blocks)
-        {
-            G.GetComponent<Renderer>().material = placeIncorrect;
+    public void validPlaceNotFound() {
+        foreach (GameObject G in blocks) {
         }
     }
 
-    protected void setNormalMaterial() {
-        foreach (GameObject G in blocks)
-        {
-            G.GetComponent<Renderer>().material = normal;
+    protected void setDefaultMaterial() {
+        foreach (GameObject G in blocks) {
+            G.GetComponent<Renderer>().material = defaultMaterial;
         }
     }
 
-    public void pickUp()
-    {
+    public void pickUp() {
         parentMachine.removePiece(id);
-        relocate();
+        updateBlocks();
     }
 
-    public void placeOnTower()
-    {
+    public void placeOnTower() {
         float currentHealth = health / maxHealth;
-        setNormalMaterial();
+        setDefaultMaterial();
         onTower = true;
     }
 
-    public Vector3 getPosition()
-    {
+    public Vector3 getPosition() {
         return transform.position;
     }
 
-    public int getID()
-    {
+    public int getID() {
         return id;
     }
 
-    public void setID(int id)
-    {
+    public void setID(int id) {
         this.id = id;
     }
 
-    public int getBlockAmount()
-    {
+    public int getBlockAmount() {
         return blockAmount;
     }
 
-    public bool[,,] getMatrix()
-    {
+    public int[,,] getMatrix() {
         return pieceValues;
     }
 
-    public TetrisMachine getTetrisMachine()
-    {
+    public TetrisMachine getTetrisMachine() {
         return parentMachine;
     }
 
-    public void setTetrisMachine(TetrisMachine tetrisMachine)
-    {
+    public void setTetrisMachine(TetrisMachine tetrisMachine) {
         parentMachine = tetrisMachine;
     }
-
-    public int3 getInternalPieceDimensions ()
-    {
-        return internalPieceDimensions;
-    }
-
 }
