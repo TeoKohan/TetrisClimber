@@ -104,7 +104,7 @@ public class TowerController : MonoBehaviour {
             {
                 for (var y = 0;  y < piece.getInternalPieceDimensions().y; y++)
                 {
-                    for (var z = 0; z < piece.getPiecgetInternalPieceDimensionseSize().z; z++)
+                    for (var z = 0; z < piece.getInternalPieceDimensions().z; z++)
                     {
                         // if there's a cube in the piece AND there's a cube in the floor
                         if (p[x,y,z] && 
