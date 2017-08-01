@@ -7,8 +7,7 @@ public class TetrisMachine : MonoBehaviour {
     //CONSTANTS
     protected const float radius = 0.5f;
 
-    public struct PieceState
-    {
+    public struct PieceState {
         public Piece piece;
         public Vector3 origin;
         public Vector3 destination;
@@ -27,6 +26,13 @@ public class TetrisMachine : MonoBehaviour {
             percentage = 0f;
         }
     }
+
+    //GAMEPLZNO
+    [SerializeField]
+    protected TextMesh energyText;
+
+    [SerializeField]
+    protected int pieceEnergy = 100;
 
     [SerializeField]
     protected float pieceInterval = 2f;
@@ -124,7 +130,9 @@ public class TetrisMachine : MonoBehaviour {
             }
         }
 
-        if (pieceSlots[maxPieces-1] == false && debugBool) {
+        if (pieceSlots[maxPieces-1] == false && debugBool && pieceEnergy > 0) {
+            pieceEnergy--;
+            energyText.text = "Power:" + pieceEnergy + " / 100";
         //if (debugBool) {
             addCurrentPiece();
             int slot = getPieceSlot();

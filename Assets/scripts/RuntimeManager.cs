@@ -11,7 +11,8 @@ public class RuntimeManager : MonoBehaviour {
 
 	void Awake () {
         GameManager.initialize();
-        Invoke("tick", tickInterval);
+        //DEBUG OR MORE LIKE PIECING SOMETHING RESEMBLING A GAME IN 20MIN
+        //Invoke("tick", tickInterval);
 	}
 
     private void Update() {

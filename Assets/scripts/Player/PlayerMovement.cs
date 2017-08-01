@@ -10,6 +10,9 @@ public class PlayerMovement : MonoBehaviour {
     private bool onTrampoline = false;
 
     [SerializeField]
+    private TextMesh panicWinButton;
+
+    [SerializeField]
     private float speed;
     [SerializeField]
     private float rotationSpeed;
@@ -28,6 +31,9 @@ public class PlayerMovement : MonoBehaviour {
 
     // Update is called once per frame
     public void update() {
+        //DEBUG AHHHHHHHHHHH
+        if (transform.position.y > 87) { panicWinButton.text = "Win"; }
+
         if (cc.isGrounded) {
             if (Input.GetButton("Jump") || onTrampoline) {
                 jump();
