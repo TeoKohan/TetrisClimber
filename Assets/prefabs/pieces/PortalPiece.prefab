@@ -51,8 +51,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11fe06765f6d0e84c8d3005644fd1afe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
-  pieceType: 0
+  maxHealth: 120
+  pieceType: 6
   block: {fileID: 1264462608208422, guid: e8d643d3dfdba0347969067e6dcc14f4, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 82596f0f9d9f6cd44b4c6c4b7a879c9b, type: 2}
   placingMaterial: {fileID: 2100000, guid: 26dbf795bc5b3de428bddd99f5790d54, type: 2}

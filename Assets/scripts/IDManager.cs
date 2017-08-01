@@ -6,6 +6,7 @@ public class IDManager {
     private int highestID;
 
     public void initialize() {
+        availableIDs = new Queue<int>();
         highestID = 0;
     }
 

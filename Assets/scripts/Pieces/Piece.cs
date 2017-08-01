@@ -27,6 +27,7 @@ public class Piece : MonoBehaviour
     protected float radius;
 
     protected TetrisMachine parentMachine;
+    protected TowerController parentTower;
     protected GameObject[] blocks;
 
     protected bool placing;
@@ -66,7 +67,13 @@ public class Piece : MonoBehaviour
                 for (int w = 0; w < z; w++) {
                     if (values[u, v, w] != PieceType.Empty) {
                         pieceValues[u, v, w] = values[u, v, w];
-                        GameObject newBlock = Instantiate(block, transform.position + (new Vector3(u, v, w) * radius * 2) - new Vector3(pieceSize.x / 2, pieceSize.y / 2 , pieceSize.z / 2) * radius * 2, Quaternion.identity);
+
+                        Vector3 centerOffset = new Vector3(pieceSize.x / 2, pieceSize.y / 2, pieceSize.z / 2) * radius;
+                        Vector3 smallPieceOffset = new Vector3( Mathf.Clamp01(2 - pieceSize.x), Mathf.Clamp01(2 - pieceSize.y), Mathf.Clamp01(2 - pieceSize.z)) * radius * 1;
+
+                        //Debug.Log(evenPieceOffset);
+
+                        GameObject newBlock = Instantiate(block, transform.position + (new Vector3(u, v, w) * radius * 2 + centerOffset + smallPieceOffset), Quaternion.identity);
                         newBlock.transform.parent = this.transform;
                         blockAmount++;
                     }
@@ -149,7 +156,7 @@ public class Piece : MonoBehaviour
 
     protected void checkForTimeout() {
         if (health <= 0) {
-            //TowerController.instance.RemovePiece(id);
+            parentTower.removePiece(id);
             Destroy(transform.gameObject);
         }
     }
@@ -165,6 +172,10 @@ public class Piece : MonoBehaviour
     public Vector3 getPosition()
     {
         return transform.position;
+    }
+
+    public GameObject[] getBlocks() {
+        return blocks;
     }
 
     public int3[] getBlockPositions()
@@ -186,13 +197,16 @@ public class Piece : MonoBehaviour
         updateBlocks();
     }
 
-    public void validPlaceFound() {
-        foreach (GameObject G in blocks) {
+    public void setPlaceState(bool available) {
+        if (available) {
+            foreach (GameObject G in blocks) {
+                G.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
+            }
         }
-    }
-
-    public void validPlaceNotFound() {
-        foreach (GameObject G in blocks) {
+        else {
+            foreach (GameObject G in blocks) {
+                G.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+            }
         }
     }
 
@@ -202,15 +216,26 @@ public class Piece : MonoBehaviour
         }
     }
 
+    protected void setPlaceMaterial() {
+        foreach (GameObject G in blocks) {
+            G.GetComponent<Renderer>().material = placingMaterial;
+        }
+    }
+
     public void pickUp() {
         parentMachine.removePiece(id);
-        updateBlocks();
+        setPlaceMaterial();
+        //updateBlocks();
     }
 
     public void placeOnTower() {
         float currentHealth = health / maxHealth;
         setDefaultMaterial();
         onTower = true;
+    }
+
+    public float getRadius() {
+        return radius;
     }
 
     public bool isOnTower() {
@@ -239,5 +264,15 @@ public class Piece : MonoBehaviour
 
     public void setTetrisMachine(TetrisMachine tetrisMachine) {
         parentMachine = tetrisMachine;
+    }
+
+    public TowerController getTowerController()
+    {
+        return parentTower;
+    }
+
+    public void setTowerController(TowerController towerController)
+    {
+        parentTower = towerController;
     }
 }

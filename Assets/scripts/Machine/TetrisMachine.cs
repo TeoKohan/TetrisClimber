@@ -136,7 +136,7 @@ public class TetrisMachine : MonoBehaviour {
             pieceScript.generateBlocks(selectRandomBlock(), radius);
             pieceScript.setID(generateID());
             pieceScript.initialize();
-            PieceState P = new PieceState(pieceScript, spawnpoint.position + Vector3.up * pieceScript.getPieceSize().y / 2, getPieceDestination(slot) + Vector3.up * pieceScript.getPieceSize().y / 2, pieceScript.getID(),  slot, 1f - ((1f / maxPieces) * (slot)));
+            PieceState P = new PieceState(pieceScript, spawnpoint.position + new Vector3(-1, 0, -1) * pieceScript.getPieceSize().y / 2, getPieceDestination(slot) + new Vector3(-1, 0, -1) * pieceScript.getPieceSize().y / 2, pieceScript.getID(),  slot, 1f - ((1f / maxPieces) * (slot)));
 
             for (int i = 0; i < maxPieces; i++) {
                 if (pieces[i].piece == null) {
@@ -225,7 +225,7 @@ public class TetrisMachine : MonoBehaviour {
                     int newSlot = pieces[slotIndex].slot - moveSlots;
 
                     pieces[slotIndex].origin = pieces[slotIndex].piece.getPosition();
-                    pieces[slotIndex].destination = getPieceDestination(newSlot);
+                    pieces[slotIndex].destination = getPieceDestination(newSlot) + new Vector3(-1, 0, -1) * pieces[slotIndex].piece.getPieceSize().y / 2;
                     pieces[slotIndex].goal = 1f - ((1f / maxPieces) * (newSlot));
                     pieces[slotIndex].percentage = pieces[slotIndex].goal - 1f - ((1f / maxPieces) * (pieces[slotIndex].slot));
 
@@ -294,14 +294,15 @@ public class TetrisMachine : MonoBehaviour {
 
         fields[2] = fields[2].Replace("\r\n", string.Empty);
 
+        Debug.Log(name);
+        Debug.Log("Bits: " + x * y * z);
+
         PieceType[,,] values = new PieceType[x, y, z];
-        for (int u = 0; u < x; u++)
-        {
-            for (int w = 0; w < z; w++)
-            {
-                for (int v = 0; v < y; v++)
-                {
-                    //Debug.Log(values[u, v, w]);
+        for (int u = 0; u < x; u++) {
+            for (int w = 0; w < z; w++) {
+                for (int v = 0; v < y; v++) {
+                    Debug.Log(u + "  " + v + "  " + w);
+                    Debug.Log(u + w * x * z + v * x);
                     values[u, v, w] = (PieceType)char.GetNumericValue(fields[2][u + w * x + v * x * z]);
                 }
             }

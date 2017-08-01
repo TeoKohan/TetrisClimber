@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 60
-  pieceType: 0
+  pieceType: 2
   block: {fileID: 1942464873513096, guid: d28da7aab2124594e9fb97c31035f908, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 82596f0f9d9f6cd44b4c6c4b7a879c9b, type: 2}
   placingMaterial: {fileID: 2100000, guid: 26dbf795bc5b3de428bddd99f5790d54, type: 2}

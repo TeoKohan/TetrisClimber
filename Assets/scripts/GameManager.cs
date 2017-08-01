@@ -25,6 +25,16 @@ public static class GameManager {
         foreach (Player P in players) {
             P.update();
         }
+
+        foreach (TowerController TC in towercontrollers) {
+            TC.update();
+        }
+    }
+
+    public static void tick() {
+        foreach (TowerController TC in towercontrollers) {
+            TC.tick();
+        }
     }
 
     public static void checkWin () {
@@ -37,12 +47,10 @@ public static class GameManager {
     }
 
     public static void addPlayer(Player player) {
-        Debug.Log(player.transform.name);
         players.Add(player);
     }
 
     public static void addTower(TowerController tower) {
-        Debug.Log("ADD");
         towercontrollers.Add(tower);
     }
 
@@ -62,14 +70,11 @@ public static class GameManager {
         return players[index].transform.position;
     }
 
-    public static TowerController getTowerController()
-    {
-        Debug.Log(towercontrollers.Count);
+    public static TowerController getTowerController() {
         return towercontrollers[0];
     }
 
-    public static TowerController getTowerController(int index)
-    {
+    public static TowerController getTowerController(int index) {
         return towercontrollers[index];
     }
 }

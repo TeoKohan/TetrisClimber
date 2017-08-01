@@ -22,6 +22,7 @@ public class TowerController : MonoBehaviour {
 
     private bool active;
 
+    private Vector3 localPosition;
     private int3 towerSize;
     private PieceType[,,] values;
     private int[,,] IDs;
@@ -31,6 +32,8 @@ public class TowerController : MonoBehaviour {
     public void initialize() {
 
         GameManager.addTower(this);
+
+        localPosition = Helper.snapVector3(transform.position);
 
         idManager = new IDManager();
         idManager.initialize();
@@ -43,17 +46,47 @@ public class TowerController : MonoBehaviour {
         //ASSIGN PROGRAMATICALLY AND ADD DOUBLING FUNCTION
         pieces = new Piece[1024];
 
-        Invoke("tickPieces", tickInterval);
-
         activate();
 
         //REMOVE AFTER INITIAL RELEASE
     }
 
+    public void update()
+    {
+        debugExtents();
+    }
+
+    //TICK FOR ALL PIECES
+    public void tick() {
+        if (active) {
+            foreach (Piece P in pieces) {
+                if (P != null) {
+                    P.tick();
+                }
+            }
+        }
+    }
+
+    public void debugMarkPlace(int3 matrix) {
+        Vector3 origin = matrixToWorldPosition(matrix);
+        Vector3 destination = matrixToWorldPosition(new int3(matrix.x, towerSize.y - 1, matrix.z));
+        Debug.DrawLine(origin, destination, Color.green, 2048f);
+    }
+
+    //DEBUG
+    protected void debugExtents() {
+        Vector3 origin = matrixToWorldPosition(new int3(0, 0, 0));
+        Vector3 destination = matrixToWorldPosition(new int3(0, towerSize.y, 0));
+        Debug.DrawLine(origin, destination, Color.red);
+
+        Debug.DrawLine(matrixToWorldPosition(new int3(towerSize.x, 0, 0)), matrixToWorldPosition(new int3(towerSize.x, towerSize.y, 0)), Color.red);
+        Debug.DrawLine(matrixToWorldPosition(new int3(0, 0, towerSize.z)), matrixToWorldPosition(new int3(0, towerSize.y, towerSize.z)), Color.red);
+        Debug.DrawLine(matrixToWorldPosition(new int3(towerSize.x, 0, towerSize.z - 1)), matrixToWorldPosition(new int3(towerSize.x, towerSize.y, towerSize.z)), Color.red);
+    }
+
     //ACTIVATE TOWER
     public void activate() {
         active = true;
-        Invoke("tickPieces", tickInterval);
     }
 
     //DEACTIVATE TOWER
@@ -61,33 +94,17 @@ public class TowerController : MonoBehaviour {
         active = false;
     }
 
-    //TICK FOR ALL PIECES
-    void tickPieces() {
-        if (active) {
-            foreach (Piece P in pieces) {
-                if (P != null) {
-                    P.tick();
-                }
-            }
-
-            Invoke("tickPieces", tickInterval);
-        }
-    }
-
     //PLACES A PIECE IF IT CAN
     public bool place(Piece piece, int3 position) {
-        if (!canPlace(piece, position) || !active) { return false; }
         piece.setID(idManager.getID());
         placePiece(piece, position);
         return true;
     }
 
     //CHECKS IF A PIECE CAN BE PLACED
-    protected bool canPlace(Piece piece, int3 position) {
+    public bool canPlace(Piece piece, int3 position) {
 
         if (!checkExtents(piece.getPieceSize(), position)) { return false; }
-
-        bool available = true;
 
         int3 pieceSize = piece.getPieceSize();
 
@@ -106,51 +123,61 @@ public class TowerController : MonoBehaviour {
             }
         }
 
-    return available;
+    return true;
     }
 
     //CHECKS IF PIECE IS WITHIN BOUNDARIES
     protected bool checkExtents(int3 pieceSize, int3 position) {
-
-        if ((pieceSize + position) > towerSize) { return false; }
+        if (((pieceSize + position) > towerSize) || (position < new int3(0, 0, 0))) { return false; }
         return true;
     }
 
 
     //WRITES TO VALUES OF THIS TOWERCONTROLLER
-    protected void placePiece(Piece piece, int3 position) {
+    public void placePiece(Piece piece, int3 position) {
+
+        Debug.Log("placing Piece");
 
         int ID = piece.getID();
         PieceType[,,] pieceValues = piece.getValues();
 
         int3 pieceSize = piece.getPieceSize();
 
+        int blockCount = 0;
+        int3[] blockPositions = new int3[piece.getBlockAmount()];
+
         for (int x = 0; x < pieceSize.x; x++) {
             for (int y = 0; y < pieceSize.y; y++) {
                 for (int z = 0; z < pieceSize.x; z++) {
                     if (piece.getValues()[x, y, z] != PieceType.Empty) {
-                        values[position.x + x, position.y + y, position.z + z] = pieceValues[x, y, z];
-                        IDs[position.x + x, position.y + y, position.z + z] = ID;
-
-                        pieces[piece.getID()] = piece;
+                        int3 matrixPosition = new int3(position.x + x, position.y + y, position.z + z);
+                        values[matrixPosition.x, matrixPosition.y, matrixPosition.z] = pieceValues[x, y, z];
+                        IDs[matrixPosition.x, matrixPosition.y, matrixPosition.z] = ID;
+                        blockPositions[blockCount] = matrixPosition;
+                        blockCount++;
                         //DEBUG BLOCKS HERE
                     }
                 }
             }
         }
+
+        piece.setBlockPositions(blockPositions);
+        pieces[piece.getID()] = piece;
+    }
+
+    //GETS THE MATRIX POSITION OF A REAL WORLD POSITION
+    public int3 worldToMatrixPosition(Vector3 position) {
+        Vector3 centerOffset = new Vector3(towerSize.x, towerSize.y, towerSize.z) / 2f;
+        Vector3 vectorMatrixPosition = (position - localPosition + centerOffset) /* / radius*/ ;
+        int3 matrixPosition = new int3((int)vectorMatrixPosition.x, (int)vectorMatrixPosition.y, (int)vectorMatrixPosition.z);
+
+        return matrixPosition;
     }
 
     //GETS THE REAL WORLD POSITION OF A MATRIX POSITION
-    public static int3 worldToMatrixPosition(Vector3 position)
-    {
-        int3 blockPosition = new int3(0, 0, 0);
-        //Tower center - tower radius * vector.one + position * radius * 2
-        return blockPosition;
-    }
-
-    //GETS THE REAL WORLD POSITION OF A MATRIX POSITION
-    public static Vector3 matrixToWorldPosition(int3 position) {
-        Vector3 blockPosition = Vector3.zero;
+    public Vector3 matrixToWorldPosition(int3 matrixPosition) {
+        Vector3 centerOffset = new Vector3(towerSize.x, towerSize.y, towerSize.z) / 2f;
+        Vector3 blockPosition = (new Vector3(matrixPosition.x, matrixPosition.y, matrixPosition.z) - centerOffset) /* * radius*/ + localPosition;
         //Tower center - tower radius * vector.one + position * radius * 2
         return blockPosition;
     }
@@ -166,9 +193,12 @@ public class TowerController : MonoBehaviour {
     // Takes out a piece from the tower
     public void removePiece(int id) {
 
+        Debug.Log("removing");
+
         Piece piece = pieces[id];
 
         foreach (int3 i in piece.getBlockPositions()) {
+            Debug.Log(i.x + "  " + i.y + "  " + i.z);
             values[i.x, i.y, i.z] = PieceType.Empty;
             IDs[i.x, i.y, i.z] = 0;
         }
